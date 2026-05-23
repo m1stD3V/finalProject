@@ -10,3 +10,6 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+vite.config.js
+package.json
+package-lock.json
