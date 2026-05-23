@@ -6,3 +6,4 @@ A project by:
 - Waheed Khan
 - Evangel Hightower-Rojas
 - Serena Heath
+- Joshua Peterson
