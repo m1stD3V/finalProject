@@ -8,6 +8,10 @@ export default class PreloadScene extends Phaser.Scene {
     super('PreloadScene');
   }
 
+  preload() {
+    this.load.audio('mainTheme', 'lib/assets/audio/mainTheme.wav');
+  }
+
   // Create the loading UI and initialize game systems
   create() {
     const w = this.cameras.main.width;
