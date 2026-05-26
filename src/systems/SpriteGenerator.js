@@ -85,8 +85,7 @@ export default class SpriteGenerator {
   // Polished player remains the same for consistency
   generatePlayer() {
     const g = this.scene.add.graphics();
-    
-    g.generateTexture('player', 34, 34);
+    g.generateTexture('player', 32, 32);
     g.destroy();
   }
 }

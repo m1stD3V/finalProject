@@ -39,7 +39,7 @@ export default class GameScene extends Phaser.Scene {
       key: 'walk',
 
       frames: this.anims.generateFrameNumbers('player', { start: 3, end: 7 }),
-      frameRate: 10,
+      frameRate: 15,
       repeat: -1,
       showOnStart: true
     }

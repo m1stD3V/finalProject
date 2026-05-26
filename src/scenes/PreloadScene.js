@@ -42,6 +42,8 @@ export default class PreloadScene extends Phaser.Scene {
         alpha: 0,
         duration: 2000,
       }]
+
+      
     });
 
     // Loading text
