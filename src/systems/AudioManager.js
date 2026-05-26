@@ -6,6 +6,7 @@ export default class AudioManager {
     this.enabled = true;
     this.ctx = null;
     this.musicPlaying = false;
+    this.bgMusic = null;
   }
 
   // Initialize AudioContext
@@ -75,9 +76,17 @@ export default class AudioManager {
 
   // Looping background music
   startMusic() {
-    if (!this.enabled || !this.ctx || this.musicPlaying) return;
+    if (!this.enabled || this.musicPlaying) return;
+
+    if (!this.bgMusic) {
+      this.bgMusic = this.scene.sound.add('mainTheme', {
+        loop: true,
+        volume: 0.5
+      });
+    }
+
+    this.bgMusic.play();
     this.musicPlaying = true;
-    this.playMusicLoop();
   }
 
   // Simple 4-bar minimalist loop
@@ -98,6 +107,7 @@ export default class AudioManager {
 
   stopMusic() {
     this.musicPlaying = false;
+    if (this.bgMusic) this.bgMusic.stop();
     clearTimeout(this.musicTimer);
   }
 }
