@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "checkJs": false,
+    "allowJs": true,
+    "noEmit": true,
+    "lib": ["ES2022", "DOM"]
+  },
+  "include": ["*.js", "lib/phaser.d.ts"]
+}
