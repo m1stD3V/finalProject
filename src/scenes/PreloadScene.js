@@ -9,7 +9,9 @@ export default class PreloadScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.audio('mainTheme', 'lib/assets/audio/mainTheme.wav');
+    // tileset1 in order: left platform, middle platform, right platform, floor, background, wall
+    this.load.pack('assets', 'lib/json/assetLoader.json');
+    this.load.pack('music', 'lib/json/musicLoader.json');
   }
 
   // Create the loading UI and initialize game systems

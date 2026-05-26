@@ -1,0 +1,11 @@
+{
+    "gameMusic": {
+        "defaultType": "audio",
+        "files": [
+            {
+                "key": "mainTheme",
+                "url": "lib/assets/audio/mainTheme.wav"
+            }
+        ]
+    }
+}

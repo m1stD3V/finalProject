@@ -22,6 +22,28 @@ export default class GameScene extends Phaser.Scene {
     this.scene.launch('UIScene');
     this.events.on('switchPeriod', () => this.switchTimePeriod());
     this.registry.set('timePeriod', this.timePeriod);
+
+    //attempt animation creation
+
+    var playerIdle = {
+      key: 'idle',
+
+      frames: this.anims.generateFrameNumbers('player', { start: 0, end: 2 }),
+      frameRate: 3,
+      repeat: -1,
+      showOnStart: true
+    }
+    this.anims.create(playerIdle);
+
+    var playerWalk = {
+      key: 'walk',
+
+      frames: this.anims.generateFrameNumbers('player', { start: 3, end: 7 }),
+      frameRate: 10,
+      repeat: -1,
+      showOnStart: true
+    }
+    this.anims.create(playerWalk);
   }
 
   createTilemaps() {
@@ -39,6 +61,7 @@ export default class GameScene extends Phaser.Scene {
 
   createPlayer() {
     this.player = new Player(this, this.level.playerStart.x, this.level.playerStart.y);
+    
   }
 
   setupCollisions() {
@@ -87,10 +110,13 @@ export default class GameScene extends Phaser.Scene {
 
     if (this.cursors.left.isDown || uiInput.left) {
       this.player.moveLeft();
+      this.player.play('walk', true);
     } else if (this.cursors.right.isDown || uiInput.right) {
       this.player.moveRight();
+      this.player.play('walk', true);
     } else {
       this.player.stopMoving();
+      this.player.play('idle', true);
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.cursors.up) || uiInput.jumpPressed) {

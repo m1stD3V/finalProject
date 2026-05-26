@@ -85,19 +85,7 @@ export default class SpriteGenerator {
   // Polished player remains the same for consistency
   generatePlayer() {
     const g = this.scene.add.graphics();
-    g.fillStyle(0x000000, 0.3);
-    g.fillRect(2, 2, 32, 32);
-    g.fillStyle(0x4488ff);
-    g.fillRect(0, 0, 32, 32);
-    g.fillStyle(0x66aaff);
-    g.fillRect(0, 0, 32, 4);
-    g.fillRect(0, 0, 4, 32);
-    g.fillStyle(0xffffff);
-    g.fillRect(4, 8, 8, 12);
-    g.fillRect(20, 8, 8, 12);
-    g.fillStyle(0x000000);
-    g.fillRect(8, 12, 4, 4);
-    g.fillRect(24, 12, 4, 4);
+    
     g.generateTexture('player', 34, 34);
     g.destroy();
   }
