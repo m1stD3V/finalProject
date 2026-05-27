@@ -66,7 +66,6 @@ export default class GameScene extends Phaser.Scene {
 
   createPlayer() {
     this.player = new Player(this, this.level.playerStart.x, this.level.playerStart.y);
-<<<<<<< HEAD
     this.characters.add(this.player);
   }
 
@@ -75,9 +74,6 @@ export default class GameScene extends Phaser.Scene {
     this.guards.push(guy);
     // Add the most recently added guard (^ That one) to the characters group so it can have collision
     this.characters.add(guy);
-=======
-    
->>>>>>> 0b0e1a479567cf4e8fed07d88cdb5efcde7568ac
   }
 
   setupCollisions() {
