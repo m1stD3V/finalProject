@@ -5,8 +5,8 @@ export default class Player extends GameObject {
   constructor(scene, x, y) {
     super(scene, x, y, 'player', { period: 'both', type: 'player' });
     this.setCollideWorldBounds(true);
-    this.speed = 220;
-    this.jumpForce = -400;
+    this.speed = 140;
+    this.jumpForce = -370;
   }
 
   moveLeft() {
@@ -26,6 +26,7 @@ export default class Player extends GameObject {
   jump() {
     if (this.body.blocked.down) {
       this.setVelocityY(this.jumpForce);
+      
       return true;
     }
     return false;

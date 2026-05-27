@@ -6,13 +6,14 @@
                 "key": "player",
                 "url": "lib/assets/player/mcSpriteSheet.png",
                 "frameConfig": {
-                    "frameWidth": 40,
-                    "frameHeight": 64
+                    "frameWidth": 20,
+                    "frameHeight": 32
                 }
             }
         ]
     },
     "tileSprites": {
+        "defaultType": "spritesheet",
         "files": [
             {   
                 "key": "tiles",

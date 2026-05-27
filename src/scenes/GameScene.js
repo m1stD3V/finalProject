@@ -9,30 +9,49 @@ export default class GameScene extends Phaser.Scene {
     super('GameScene');
   }
 
+  
+
   create() {
+    //load map json
+
+    const map = this.make.tilemap({ key: 'level0', tileWidth: 16, tileHeight: 16 });
+    const tileset = map.addTilesetImage('castle0', 'tiles');
+
+    const layer0 = map.createLayer('bg', tileset, 0, 0);
+    const layer1 = map.createLayer('main', tileset, 0, 0);
+    
+    this.cameras.main.zoom = 2.5;
+    this.cameras.main.setBounds(0, 0, 400, 224);
+
     this.timePeriod = 'past';
     this.level = LEVELS[0];
     this.guards = []; // A list of all the guards in the level (Past & Present) so they don't have to be saved in individual variables
     this.characters = this.add.group(); // a group so that I can add collision in a batch as opposed to one-by-one
 
     // Set world bounds to exactly match the 25x14 tilemap (800x448)
-    this.physics.world.setBounds(0, 0, 800, 448);
+    this.physics.world.setBounds(0, 0, 400, 224);
 
-    this.createTilemaps();
     this.createPlayer();
+<<<<<<< HEAD
     this.createGuard(this.level.playerStart.x * 2, this.level.playerStart.y, [{ x: 100, y: 399 }, { x: 600, y: 271 }, { x: 720, y: 399 }]);
     this.setupCollisions();
+=======
+>>>>>>> 5fa7d9d (Fully implemented tilemap loading and adjusted player movement.)
     this.setupKeyboardInput();
+
+    layer1.setCollisionByExclusion([-1]);
+    this.physics.add.collider(this.player, layer1);
 
     this.scene.launch('UIScene');
     this.events.on('switchPeriod', () => this.switchTimePeriod());
     this.registry.set('timePeriod', this.timePeriod);
+    
 
     //attempt animation creation
 
-    var playerIdle = {
-      key: 'idle',
+    
 
+<<<<<<< HEAD
       frames: this.anims.generateFrameNumbers('player', { start: 0, end: 2 }),
       frameRate: 3,
       repeat: -1,
@@ -71,23 +90,29 @@ export default class GameScene extends Phaser.Scene {
       showOnStart: true
     }
     this.anims.create(playerWalk);
+=======
+    
+    this.cameras.main.startFollow(this.player);
+>>>>>>> 5fa7d9d (Fully implemented tilemap loading and adjusted player movement.)
   }
 
   createTilemaps() {
-    this.pastMap = this.make.tilemap({ data: this.level.past.tileData, tileWidth: 32, tileHeight: 32 });
-    const pastTileset = this.pastMap.addTilesetImage('tileset_past');
-    this.pastLayer = this.pastMap.createLayer(0, pastTileset, 0, 0);
-    this.pastLayer.setCollisionByExclusion([0]);
 
-    this.presentMap = this.make.tilemap({ data: this.level.present.tileData, tileWidth: 32, tileHeight: 32 });
-    const presentTileset = this.presentMap.addTilesetImage('tileset_present');
-    this.presentLayer = this.presentMap.createLayer(0, presentTileset, 0, 0);
-    this.presentLayer.setCollisionByExclusion([0]);
-    this.presentLayer.setVisible(false);
+    // this.pastMap = this.make.tilemap({ data: this.level.past.tileData, tileWidth: 32, tileHeight: 32 });
+    // const pastTileset = this.pastMap.addTilesetImage('tileset_past');
+    // this.pastLayer = this.pastMap.createLayer(0, pastTileset, 0, 0);
+    // this.pastLayer.setCollisionByExclusion([0]);
+
+    // this.presentMap = this.make.tilemap({ data: this.level.present.tileData, tileWidth: 32, tileHeight: 32 });
+    // const presentTileset = this.presentMap.addTilesetImage('tileset_present');
+    // this.presentLayer = this.presentMap.createLayer(0, presentTileset, 0, 0);
+    // this.presentLayer.setCollisionByExclusion([0]);
+    // this.presentLayer.setVisible(false);
   }
 
   createPlayer() {
     this.player = new Player(this, this.level.playerStart.x, this.level.playerStart.y);
+<<<<<<< HEAD
     this.characters.add(this.player);
   }
 
@@ -96,6 +121,8 @@ export default class GameScene extends Phaser.Scene {
     this.guards.push(guy);
     // Add the most recently added guard (^ That one) to the characters group so it can have collision
     this.characters.add(guy);
+=======
+>>>>>>> 5fa7d9d (Fully implemented tilemap loading and adjusted player movement.)
   }
 
   setupCollisions() {
@@ -156,6 +183,7 @@ export default class GameScene extends Phaser.Scene {
 
     if (Phaser.Input.Keyboard.JustDown(this.cursors.up) || uiInput.jumpPressed) {
       if (this.player.jump()) {
+        
         const audio = this.registry.get('audioManager');
         if (audio) audio.playJump();
       }

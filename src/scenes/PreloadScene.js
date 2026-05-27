@@ -1,4 +1,3 @@
-import SpriteGenerator from '../systems/SpriteGenerator.js';
 import AudioManager from '../systems/AudioManager.js';
 
 // Handles asset generation and system initialization before the game starts
@@ -9,13 +8,46 @@ export default class PreloadScene extends Phaser.Scene {
   }
 
   preload() {
-    // tileset1 in order: left platform, middle platform, right platform, floor, background, wall
     this.load.pack('assets', 'lib/json/assetLoader.json');
     this.load.pack('music', 'lib/json/musicLoader.json');
+    this.load.tilemapTiledJSON('level0', 'lib/json/castleMap0.json');
   }
 
   // Create the loading UI and initialize game systems
   create() {
+
+    // init player animations
+    var playerIdle = {
+          key: 'idle',
+    
+          frames: this.anims.generateFrameNumbers('player', { start: 0, end: 2 }),
+          frameRate: 3,
+          repeat: -1,
+          showOnStart: true
+        }
+        this.anims.create(playerIdle);
+    
+        var playerWalk = {
+          key: 'walk',
+    
+          frames: this.anims.generateFrameNumbers('player', { start: 3, end: 7 }),
+          frameRate: 15,
+          repeat: -1,
+          showOnStart: false
+        }
+        this.anims.create(playerWalk);
+    
+        var playerJump = {
+          key: 'jump',
+    
+          frames: this.anims.generateFrameNumbers('player', { start: 8, end: 8 }),
+          frameRate: 0,
+          repeat: -1,
+          showOnStart: false
+        }
+        this.anims.create(playerJump);
+
+
     const w = this.cameras.main.width;
     const h = this.cameras.main.height;
 
@@ -69,10 +101,6 @@ export default class PreloadScene extends Phaser.Scene {
     this.time.delayedCall(2000, () => {
       // Simulate progress bar filling
       bar.fillRect(w / 2 - 148, h / 2 + 12, 296, 16);
-
-      // Generate all procedural textures
-      const gen = new SpriteGenerator(this);
-      gen.generateAll();
 
       // Initialize the audio system
       const audio = new AudioManager(this);

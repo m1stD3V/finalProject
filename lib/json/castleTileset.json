@@ -1,0 +1,14 @@
+{ "columns":7,
+ "image":"..\/assets\/environment\/levelTileset0.png",
+ "imageheight":16,
+ "imagewidth":112,
+ "margin":0,
+ "name":"castle0",
+ "spacing":0,
+ "tilecount":7,
+ "tiledversion":"1.12.2",
+ "tileheight":16,
+ "tilewidth":16,
+ "type":"tileset",
+ "version":"1.10"
+}

@@ -8,9 +8,9 @@ import TransitionScene from './scenes/TransitionScene.js';
 
 // Simplified PoC configuration
 const config = {
-  type: Phaser.AUTO,
+  type: Phaser.WEBGL,
   width: 800,
-  height: 450,
+  height: 448,
   parent: 'game-container',
   backgroundColor: '#222222',
   scale: {
@@ -20,10 +20,14 @@ const config = {
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: { y: 800 },
+      gravity: { y: 1100 },
       debug: false
     }
   },
+  pixelArt: true,
+  roundPixels: true,
+  antiAlias: false,
+  autoRound:true,
   scene: [BootScene, PreloadScene, MenuScene, GameScene, UIScene, TransitionScene]
 };
 
