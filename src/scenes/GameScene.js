@@ -49,6 +49,28 @@ export default class GameScene extends Phaser.Scene {
       showOnStart: true
     }
     this.anims.create(playerWalk);
+
+    //attempt animation creation
+
+    var playerIdle = {
+      key: 'idle',
+
+      frames: this.anims.generateFrameNumbers('player', { start: 0, end: 2 }),
+      frameRate: 3,
+      repeat: -1,
+      showOnStart: true
+    }
+    this.anims.create(playerIdle);
+
+    var playerWalk = {
+      key: 'walk',
+
+      frames: this.anims.generateFrameNumbers('player', { start: 3, end: 7 }),
+      frameRate: 15,
+      repeat: -1,
+      showOnStart: true
+    }
+    this.anims.create(playerWalk);
   }
 
   createTilemaps() {
