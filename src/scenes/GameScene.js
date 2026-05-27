@@ -1,5 +1,7 @@
 import { LEVELS } from '../levelData.js';
 import Player from '../objects/Player.js';
+import Guard_Present from '../objects/Guards.js';
+import Guard_Past from '../objects/Guards.js';
 
 // Core PoC logic for switching between time periods
 export default class GameScene extends Phaser.Scene {
@@ -10,12 +12,15 @@ export default class GameScene extends Phaser.Scene {
   create() {
     this.timePeriod = 'past';
     this.level = LEVELS[0];
-    
+    this.guards = []; // A list of all the guards in the level (Past & Present) so they don't have to be saved in individual variables
+    this.characters = this.add.group(); // a group so that I can add collision in a batch as opposed to one-by-one
+
     // Set world bounds to exactly match the 25x14 tilemap (800x448)
     this.physics.world.setBounds(0, 0, 800, 448);
 
     this.createTilemaps();
     this.createPlayer();
+    this.createGuard(this.level.playerStart.x * 2, this.level.playerStart.y, [{ x: 100, y: 399 }, { x: 600, y: 271 }, { x: 720, y: 399 }]);
     this.setupCollisions();
     this.setupKeyboardInput();
 
@@ -39,11 +44,19 @@ export default class GameScene extends Phaser.Scene {
 
   createPlayer() {
     this.player = new Player(this, this.level.playerStart.x, this.level.playerStart.y);
+    this.characters.add(this.player);
+  }
+
+  createGuard(x, y, patrolRoute) {
+    let guy = new Guard_Present(this, x, y, 300, patrolRoute, "present", "player");
+    this.guards.push(guy);
+    // Add the most recently added guard (^ That one) to the characters group so it can have collision
+    this.characters.add(guy);
   }
 
   setupCollisions() {
-    this.pastCollider = this.physics.add.collider(this.player, this.pastLayer);
-    this.presentCollider = this.physics.add.collider(this.player, this.presentLayer);
+    this.pastCollider = this.physics.add.collider(this.characters, this.pastLayer);
+    this.presentCollider = this.physics.add.collider(this.characters, this.presentLayer);
     this.presentCollider.active = false;
   }
 
@@ -80,6 +93,7 @@ export default class GameScene extends Phaser.Scene {
 
   update() {
     this.handleInput();
+    this.manageGuards();
   }
 
   handleInput() {
@@ -106,4 +120,32 @@ export default class GameScene extends Phaser.Scene {
       uiInput.timeTravelPressed = false;
     }
   }
+
+  /** manageGuards 
+   * This function controls the guards movement by iterating through every guard in the lise [this.guards] and
+   * for each guard it will check if the player is in their range. It will chase the player if they are and patrol
+   * after the player has escaped for at least 1.5 seconds.
+   */
+  manageGuards () {
+    for (let i = 0; i < this.guards.length; i++) {
+      let guy = this.guards[i];
+      if (guy.isActiveInPeriod() == true) {
+        if (guy.chaseRange.contains(this.player.x,this.player.y)) {
+          guy.patroling = false;
+          guy.chase(this.player);
+        } else if (guy.patroling == true) {
+          guy.patrol();
+        } else {
+          guy.stopMoving();
+          this.time.delayedCall(1500, () => {
+            guy.patroling = true;
+          });
+        }
+      } else {
+        guy.patroling = false;
+        guy.stopMoving();
+      }
+    }
+  }
+
 }
