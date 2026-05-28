@@ -47,7 +47,7 @@ export default class GameScene extends Phaser.Scene {
     //attempt animation creation
 
     
-
+    var playerIdle = {
       frames: this.anims.generateFrameNumbers('player', { start: 0, end: 2 }),
       frameRate: 3,
       repeat: -1,
@@ -199,3 +199,4 @@ export default class GameScene extends Phaser.Scene {
       }
     }
   }
+}
