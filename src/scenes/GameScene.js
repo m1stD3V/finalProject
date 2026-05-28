@@ -32,11 +32,8 @@ export default class GameScene extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, 400, 224);
 
     this.createPlayer();
-<<<<<<< HEAD
     this.createGuard(this.level.playerStart.x * 2, this.level.playerStart.y, [{ x: 100, y: 399 }, { x: 600, y: 271 }, { x: 720, y: 399 }]);
     this.setupCollisions();
-=======
->>>>>>> 5fa7d9d (Fully implemented tilemap loading and adjusted player movement.)
     this.setupKeyboardInput();
 
     layer1.setCollisionByExclusion([-1]);
@@ -51,7 +48,6 @@ export default class GameScene extends Phaser.Scene {
 
     
 
-<<<<<<< HEAD
       frames: this.anims.generateFrameNumbers('player', { start: 0, end: 2 }),
       frameRate: 3,
       repeat: -1,
@@ -90,29 +86,12 @@ export default class GameScene extends Phaser.Scene {
       showOnStart: true
     }
     this.anims.create(playerWalk);
-=======
     
     this.cameras.main.startFollow(this.player);
->>>>>>> 5fa7d9d (Fully implemented tilemap loading and adjusted player movement.)
-  }
-
-  createTilemaps() {
-
-    // this.pastMap = this.make.tilemap({ data: this.level.past.tileData, tileWidth: 32, tileHeight: 32 });
-    // const pastTileset = this.pastMap.addTilesetImage('tileset_past');
-    // this.pastLayer = this.pastMap.createLayer(0, pastTileset, 0, 0);
-    // this.pastLayer.setCollisionByExclusion([0]);
-
-    // this.presentMap = this.make.tilemap({ data: this.level.present.tileData, tileWidth: 32, tileHeight: 32 });
-    // const presentTileset = this.presentMap.addTilesetImage('tileset_present');
-    // this.presentLayer = this.presentMap.createLayer(0, presentTileset, 0, 0);
-    // this.presentLayer.setCollisionByExclusion([0]);
-    // this.presentLayer.setVisible(false);
   }
 
   createPlayer() {
     this.player = new Player(this, this.level.playerStart.x, this.level.playerStart.y);
-<<<<<<< HEAD
     this.characters.add(this.player);
   }
 
@@ -121,8 +100,6 @@ export default class GameScene extends Phaser.Scene {
     this.guards.push(guy);
     // Add the most recently added guard (^ That one) to the characters group so it can have collision
     this.characters.add(guy);
-=======
->>>>>>> 5fa7d9d (Fully implemented tilemap loading and adjusted player movement.)
   }
 
   setupCollisions() {
@@ -222,5 +199,3 @@ export default class GameScene extends Phaser.Scene {
       }
     }
   }
-
-}
