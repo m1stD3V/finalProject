@@ -18,8 +18,8 @@ export default class GameScene extends Phaser.Scene {
     this.mainLayer = map.createLayer('main', tileset, 0, 0);
 
     this.cameras.main.zoom = 2.5;
-    this.cameras.main.setBounds(0, 0, 400, 224);
-    this.physics.world.setBounds(0, 0, 400, 224);
+    this.cameras.main.setBounds(0, 0, 560, 224);
+    this.physics.world.setBounds(0, 0, 560, 224);
 
     this.timePeriod = 'past';
     this.level = LEVELS[0];
@@ -30,8 +30,8 @@ export default class GameScene extends Phaser.Scene {
 
     // Two guards — one per time period — patrolling opposite halves of the map.
     // Y=50 so they drop onto the floor naturally; patrol Y matches floor level (~192).
-    this.createGuard(Guard_Past,    80, 50, [{ x: 40,  y: 192 }, { x: 185, y: 192 }]);
-    this.createGuard(Guard_Present, 320, 50, [{ x: 215, y: 192 }, { x: 360, y: 192 }]);
+    this.createGuard(Guard_Past,    500, 50, [{ x: 500,  y: 192 }, { x: 250, y: 192 }]);
+    this.createGuard(Guard_Present, 320, 50, [{ x: 500, y: 192 }, { x: 360, y: 192 }]);
 
     this.setupCollisions();
     this.setupKeyboardInput();

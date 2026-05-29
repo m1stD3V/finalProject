@@ -5,7 +5,7 @@ export const LEVELS = [
     id: 1,
     name: 'PoC Level',
     // Position player on the floor (Row 12 * 32px = 384px)
-    playerStart: { x: 100, y: 384 },
+    playerStart: { x: 100, y: 100 },
     past: {
       // 0 = empty, 1 = stone wall, 2 = wood floor
       tileData: [
