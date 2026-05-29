@@ -8,9 +8,9 @@ export default class PreloadScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.pack('assets', 'lib/json/assetLoader.json');
-    this.load.pack('music', 'lib/json/musicLoader.json');
-    this.load.tilemapTiledJSON('level0', 'lib/json/castleMap0.json');
+    this.load.pack('assets', 'json/assetLoader.json');
+    this.load.pack('music', 'json/musicLoader.json');
+    this.load.tilemapTiledJSON('level0', 'json/castleMap0.json');
   }
 
   // Create the loading UI and initialize game systems

@@ -71,9 +71,9 @@ flowchart TB
 
     subgraph Data["Data Layer"]
         I --> AN["src/levelData.js<br/>LEVELS array<br/>Past/present tile grids"]
-        I --> AO["lib/json/castleMap0.json<br/>Tiled tilemap 25×14<br/>bg + main layers"]
-        D --> AP["lib/json/assetLoader.json<br/>Sprite tileset definitions"]
-        D --> AQ["lib/json/musicLoader.json<br/>Audio asset definitions"]
+        I --> AO["json/castleMap0.json<br/>Tiled tilemap 25×14<br/>bg + main layers"]
+        D --> AP["json/assetLoader.json<br/>Sprite tileset definitions"]
+        D --> AQ["json/musicLoader.json<br/>Audio asset definitions"]
     end
 
     style Init fill:#1a1a2e,color:#eee,stroke:#16213e
@@ -128,4 +128,4 @@ The prototype establishes a data-driven level progression system:
 |---|---|---|
 | **1. GameObject subclass hierarchy** | `GameObject` (extends `Phaser.Physics.Arcade.Sprite`) → `Player`, `Guard_Generic` → `Guard_Past`, `Guard_Present`. The base class provides period-awareness (visibility + physics toggling), shared movement methods, and `persistentState`. | `src/objects/GameObject.js`, `Player.js`, `Guards.js` |
 | **3. Design presets in program code** | `src/levelData.js` contains a JSON-structured array of level configs with player start coordinates and per-period 25×14 tile grids, all defined inline as JavaScript objects. | `src/levelData.js` |
-| **4. Design presets in data files** | External JSON files decouple asset configuration from code: `assetLoader.json` (sprite sheet definitions), `musicLoader.json` (audio asset paths), `castleMap0.json` (Tiled tilemap with two layers), and `castle0.json` / `castleTileset.json` (tileset metadata). | `lib/json/` |
+| **4. Design presets in data files** | External JSON files decouple asset configuration from code: `assetLoader.json` (sprite sheet definitions), `musicLoader.json` (audio asset paths), `castleMap0.json` (Tiled tilemap with two layers), and `castle0.json` / `castleTileset.json` (tileset metadata). | `json/` |

@@ -4,7 +4,7 @@
         "files": [
             {
                 "key": "player",
-                "url": "lib/assets/player/mcSpriteSheet.png",
+                "url": "assets/player/mcSpriteSheet.png",
                 "frameConfig": {
                     "frameWidth": 20,
                     "frameHeight": 32
@@ -17,7 +17,7 @@
         "files": [
             {   
                 "key": "tiles",
-                "url": "lib/assets/environment/levelTileset0.png",
+                "url": "assets/environment/levelTileset0.png",
                 "frameConfig": {
                     "frameWidth": 16,
                     "frameHeight": 16
