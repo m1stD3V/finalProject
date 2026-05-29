@@ -6,6 +6,86 @@ A 2D platformer with a time-travel mechanic where the player switches between pa
 
 **Engine:** Phaser 3 with Arcade Physics
 
+```mermaid
+flowchart TB
+    subgraph Init["Initialization"]
+        A["index.html<br/>Loads Phaser 3 CDN + main.js"] --> B["src/main.js<br/>Phaser.Game Config<br/>WEBGL · 800x448 · Arcade Physics"]
+        B --> C["BootScene<br/>Starts PreloadScene"]
+    end
+
+    subgraph Loading["Asset Loading"]
+        C --> D["PreloadScene"]
+        D --> E["Load Assets<br/>Spritesheets · Tilesets<br/>Tilemap JSON · Audio"]
+        D --> F["Create Animations<br/>idle · walk · jump"]
+        D --> G["Studio Intro<br/>Tween chain + loading bar"]
+        G --> H["MenuScene<br/>'TIME THIEF' title<br/>'START GAME' button"]
+    end
+
+    subgraph Gameplay["Core Gameplay"]
+        H --> I["GameScene<br/>Runs in parallel with UIScene"]
+        I --> J["Create Tilemap<br/>bg layer + main collision layer"]
+        I --> K["Create Player<br/>period='both'<br/>speed=140 · jumpForce=-370"]
+        I --> L["Create Guards<br/>Guard_Past · Guard_Present<br/>patrol routes + chase AI"]
+        J --> M["Arcade Physics<br/>Characters vs tile layer<br/>Player vs guards"]
+        K --> M
+        L --> M
+        I --> N["Set up Input<br/>Cursor keys · T key<br/>Mobile buttons via registry"]
+        I --> O["Camera<br/>Follows player · zoom=2.5"]
+    end
+
+    subgraph FrameLoop["Every Frame (update)"]
+        N --> P["handleInput()"]
+        P --> Q["Move left/right · Jump<br/>Play walk/idle/jump anim<br/>Play jump SFX (synthesized)"]
+        L --> R["manageGuards()"]
+        R --> S{"Active in<br/>current period?"}
+        S -- Yes --> T{"Player within<br/>chase range?"}
+        T -- Yes --> U["Chase player<br/>Move toward · Jump if reachable"]
+        T -- No --> V["Patrol waypoints<br/>Reverse at route end"]
+        S -- No --> W["Freeze guard<br/>stopMoving + skip"]
+    end
+
+    subgraph TimeTravel["Time Period Switching"]
+        I --> X["Press T key"]
+        X --> Y{"Player<br/>mid-air?"}
+        Y -- Yes --> Z["Block switch"]
+        Y -- No --> AA["Camera shake (100ms)"]
+        AA --> AB["Launch TransitionScene<br/>Fade to black · Callback · Fade from black"]
+        AB --> AC["Toggle period<br/>past ⟷ present"]
+        AC --> AD["Update registry 'timePeriod'<br/>Emit 'periodChanged' event"]
+        AD --> AE["Camera flash (200ms white)"]
+        AD --> AF["Play time-switch SFX<br/>Synthesized sawtooth sweep<br/>200Hz → 1200Hz"]
+    end
+
+    subgraph UI["UI Overlay (Parallel Scene)"]
+        I -.-> AG["UIScene<br/>Launched by GameScene"]
+        AG --> AH["HUD Background + Text<br/>'PAST' / 'PRESENT' indicator<br/>Gold / Blue styling"]
+        AG --> AI["Mobile Touch Buttons<br/>◀ Left · ▶ Right · ▲ Jump · ⚡ Time"]
+        AD -.-> AJ["Listen 'periodChanged'<br/>Update HUD text"]
+    end
+
+    subgraph Audio["Audio System"]
+        AC --> AK["AudioManager<br/>Singleton (Web Audio API)"]
+        AK --> AL["Background Music<br/>mainTheme.wav · loop · vol 0.5"]
+        AK --> AM["Synthesized SFX<br/>Jump: triangle 400→600Hz<br/>Switch: sawtooth 200→1200Hz"]
+    end
+
+    subgraph Data["Data Layer"]
+        I --> AN["src/levelData.js<br/>LEVELS array<br/>Past/present tile grids"]
+        I --> AO["lib/json/castleMap0.json<br/>Tiled tilemap 25×14<br/>bg + main layers"]
+        D --> AP["lib/json/assetLoader.json<br/>Sprite tileset definitions"]
+        D --> AQ["lib/json/musicLoader.json<br/>Audio asset definitions"]
+    end
+
+    style Init fill:#1a1a2e,color:#eee,stroke:#16213e
+    style Loading fill:#1a1a2e,color:#eee,stroke:#16213e
+    style Gameplay fill:#16213e,color:#eee,stroke:#0f3460
+    style FrameLoop fill:#0f3460,color:#eee,stroke:#533483
+    style TimeTravel fill:#533483,color:#eee,stroke:#e94560
+    style UI fill:#2d1b69,color:#eee,stroke:#e94560
+    style Audio fill:#1a3a2e,color:#eee,stroke:#2d6a4f
+    style Data fill:#1a2a3e,color:#eee,stroke:#2d4a6f
+```
+
 ---
 
 ## Requirements Coverage
