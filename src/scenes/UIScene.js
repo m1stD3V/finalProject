@@ -4,6 +4,16 @@ export default class UIScene extends Phaser.Scene {
     super('UIScene');
   }
 
+  preload() {
+    this.load.path = "assets/";
+
+    this.load.image("jumpButt","UI/button_jump.png"); // Lol
+    this.load.image("rightButt", "UI/button_right.png");
+    this.load.image("leftButt", "UI/button_left.png");
+    
+    this.load.spritesheet("timeButt", "UI/button_timeTravel.png",{ frameWidth:32, frameHeight: 32});
+  }
+
   create() {
     // Initial input state
     this.registry.set('uiInput', { left: false, right: false, jumpPressed: false, timeTravelPressed: false });
@@ -17,10 +27,35 @@ export default class UIScene extends Phaser.Scene {
     });
 
     // Mobile Controls
-    this.createButton(80, 380, 70, 70, '◀', 'left');
-    this.createButton(170, 380, 70, 70, '▶', 'right');
-    this.createButton(720, 380, 80, 80, '▲', 'jump');
-    this.createButton(610, 380, 70, 70, '⚡', 'timeTravel', 0xffcc00);
+    let UIScale = 3;
+    this.createButton(80, 380, 'left', "leftButt", 1*UIScale);
+    this.createButton(180, 380, 'right', "rightButt", 1*UIScale);
+    this.createButton(720, 380, 'jump', "jumpButt", 1*UIScale);
+
+    const ageToPresent = {
+      key: "toPresent",
+      frames: this.anims.generateFrameNumbers("timeButt", {frames: [12,11,10,9,8,7,6,5,4,3,2,1,0]}),
+      frameRate: 16,
+      repeat: 0,
+    }
+    const ageToPast = {
+      key: "toPast",
+      frames: this.anims.generateFrameNumbers("timeButt", {frames: [0,1,2,3,4,5,6,7,8,9,10,11,12]}),
+      frameRate: 16,
+      repeat: 0,
+    }
+    this.anims.create(ageToPresent);
+    this.anims.create(ageToPast);
+
+    const travButton = this.createButton(610, 380, 'timeTravel', "timeButt", 0.9*UIScale)
+    this.scene.get("GameScene").events.on("periodChanged", (period) => {
+        console.log(`Changed Period to ${period}`);
+        if (period == "present") {
+          travButton.play("toPresent");
+        } else {
+          travButton.play("toPast");
+        }
+      }, this)
   }
 
   // Create a more polished HUD for time indication
@@ -45,29 +80,22 @@ export default class UIScene extends Phaser.Scene {
   }
 
   // Create stylized interactive buttons
-  createButton(x, y, w, h, label, action, color = 0xffffff) {
-    const bg = this.add.graphics();
+  createButton(x, y, action, texture, scale = 1) {
+    const button = this.add.sprite(x, y, texture);
+    button.setScale(scale);
+    const w = button.width * button.scale;
+    const h = button.height * button.scale;
     const drawBtn = (pressed = false) => {
-      bg.clear();
-      bg.fillStyle(0x222222, pressed ? 0.9 : 0.6);
-      bg.fillRoundedRect(x - w / 2, y - h / 2, w, h, 12);
-      bg.lineStyle(3, color, pressed ? 1 : 0.5);
-      bg.strokeRoundedRect(x - w / 2, y - h / 2, w, h, 12);
+      button.setAlpha(pressed ? 1 : 0.75);
     };
 
     drawBtn();
-
-    const text = this.add.text(x, y, label, { 
-      fontSize: '32px', 
-      color: color === 0xffffff ? '#ffffff' : '#000000',
-      backgroundColor: color === 0xffffff ? 'transparent' : color,
-      padding: { x: 5, y: 2 }
-    }).setOrigin(0.5);
 
     const zone = this.add.zone(x, y, w, h).setInteractive();
     
     zone.on('pointerdown', () => {
       drawBtn(true);
+
       const input = this.registry.get('uiInput');
       if (action === 'left' || action === 'right') input[action] = true;
       else if (action === 'jump') input.jumpPressed = true;
@@ -82,5 +110,7 @@ export default class UIScene extends Phaser.Scene {
 
     zone.on('pointerup', release);
     zone.on('pointerout', release);
+
+    return(button);
   }
 }
