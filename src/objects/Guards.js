@@ -4,8 +4,8 @@ export default class Guard_Generic extends GameObject {
   constructor(scene, x, y, visionSize, patrolRoute, timePeriod, texture) {
     super(scene, x, y, texture, { period: timePeriod, type: 'enemy' });
     this.setCollideWorldBounds(true);
-    this.speed = 180;
-    this.jumpForce = -500;
+    this.speed = 80;
+    this.jumpForce = -400;
     // Negative value: how many px above this guard it can jump to reach a target
     this.verticalReach = this.height * (Math.abs(this.jumpForce) / 100) - this.height;
     this.chaseRange = new Phaser.Geom.Ellipse(x, y, visionSize, visionSize);

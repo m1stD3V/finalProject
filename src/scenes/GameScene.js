@@ -28,6 +28,14 @@ export default class GameScene extends Phaser.Scene {
 
     this.createPlayer();
 
+    // Create Player Objective
+    this.objective = this.add.rectangle(200, 50, 10, 10, 0x00ff00).setDepth(100);
+    this.physics.add.existing(this.objective, true);
+    this.physics.add.overlap(this.player, this.objective, () => {
+      console.log('Go to next level!');
+      // this.scene.start('NextScene');
+    });
+
     // Two guards — one per time period — patrolling opposite halves of the map.
     // Y=50 so they drop onto the floor naturally; patrol Y matches floor level (~192).
     this.createGuard(Guard_Past,    80, 50, [{ x: 40,  y: 192 }, { x: 185, y: 192 }]);
