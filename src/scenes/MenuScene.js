@@ -31,7 +31,7 @@ export default class MenuScene extends Phaser.Scene {
         audio.resume();
         audio.startMusic();
       }
-      this.scene.start('GameScene');
+      this.scene.start('TutorialScene');
     });
   }
 

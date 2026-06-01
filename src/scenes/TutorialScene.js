@@ -1,13 +1,13 @@
 import { LEVELS } from '../levelData.js';
 import Player from '../objects/Player.js';
-import { Guard_Present, Guard_Past } from '../objects/Guards.js';
 
-export default class GameScene extends Phaser.Scene {
+export default class TutorialScene extends Phaser.Scene {
   constructor() {
-    super('GameScene');
+    super('TutorialScene');
   }
 
   create() {
+    console.log('Creating TutorialScene');
     const map = this.make.tilemap({ key: 'level0', tileWidth: 16, tileHeight: 16 });
     const tileset = map.addTilesetImage('castle0', 'tiles');
 
@@ -28,10 +28,24 @@ export default class GameScene extends Phaser.Scene {
 
     this.createPlayer();
 
-    // Two guards — one per time period — patrolling opposite halves of the map.
-    // Y=50 so they drop onto the floor naturally; patrol Y matches floor level (~192).
-    this.createGuard(Guard_Past,    500, 50, [{ x: 500,  y: 192 }, { x: 250, y: 192 }]);
-    this.createGuard(Guard_Present, 320, 50, [{ x: 500, y: 192 }, { x: 360, y: 192 }]);
+    // Create Player Objective
+    this.objective2 = this.add.rectangle(250, 115, 10, 10, 0x00ff00).setDepth(100).setAlpha(.20);
+    this.objective = this.add.rectangle(250, 115, 10, 10, 0x00ff00).setDepth(100).setAlpha(.20);
+    this.physics.add.existing(this.objective, true);
+
+    this.tweens.add({
+      targets: this.objective2,
+      alpha: 1,
+      duration: 1000,
+      yoyo: true,
+      repeat: -1
+    });
+
+    // Tutorial Text
+    this.add.text(20, 35, 'Welcome to Time Thief!\nUse arrow buttons on your left to move.\nPress the lightning button to switch time periods and\navoid obstacles.', {
+      fontSize: '10ff',
+      fill: '#ffffff'
+    });
 
     this.setupCollisions();
     this.setupKeyboardInput();
@@ -46,12 +60,6 @@ export default class GameScene extends Phaser.Scene {
   createPlayer() {
     this.player = new Player(this, this.level.playerStart.x, this.level.playerStart.y);
     this.characters.add(this.player);
-  }
-
-  createGuard(GuardClass, x, y, patrolRoute) {
-    const guard = new GuardClass(this, x, y, 300, patrolRoute);
-    this.guards.push(guard);
-    this.characters.add(guard);
   }
 
   setupCollisions() {
@@ -90,7 +98,16 @@ export default class GameScene extends Phaser.Scene {
 
   update() {
     this.handleInput();
-    this.manageGuards();
+    if (this.timePeriod === 'past') {
+      this.objective.setAlpha(.25);
+    } else {
+      this.objective.setAlpha(1);
+      this.physics.add.overlap(this.player, this.objective, () => {
+      console.log('Go to next level!');
+      this.scene.start('GameScene');
+    });
+    }
+
   }
 
   handleInput() {
@@ -118,42 +135,6 @@ export default class GameScene extends Phaser.Scene {
     if (Phaser.Input.Keyboard.JustDown(this.tKey) || uiInput.timeTravelPressed) {
       this.switchTimePeriod();
       uiInput.timeTravelPressed = false;
-    }
-  }
-
-  /**
-   * Each frame: active-period guards chase the player when in range, patrol
-   * otherwise, and wait briefly after losing sight before resuming patrol.
-   * Guards outside the current time period freeze in place.
-   */
-  manageGuards() {
-    for (const guard of this.guards) {
-      if (!guard.isActiveInPeriod(this.timePeriod)) {
-        guard.patroling = false;
-        guard.stopMoving();
-        continue;
-      }
-
-      if (guard.chaseRange.contains(this.player.x, this.player.y)) {
-        // Cancel any pending return-to-patrol timer and start chasing
-        if (guard.cooldownTimer) {
-          guard.cooldownTimer.remove();
-          guard.cooldownTimer = null;
-        }
-        guard.patroling = false;
-        guard.chase(this.player);
-      } else if (guard.patroling) {
-        guard.patrol();
-      } else {
-        // Just lost the player — stop and wait before resuming patrol
-        guard.stopMoving();
-        if (!guard.cooldownTimer) {
-          guard.cooldownTimer = this.time.delayedCall(1500, () => {
-            guard.patroling = true;
-            guard.cooldownTimer = null;
-          });
-        }
-      }
     }
   }
 }
