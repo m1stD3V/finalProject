@@ -33,6 +33,10 @@ export default class MenuScene extends Phaser.Scene {
       }
       this.scene.start('TutorialScene');
     });
+
+    this.createMenuButton(w / 2, h / 2 + 140, 'SETTINGS', () => {
+      this.scene.launch('SettingsScene', { caller: 'MenuScene' });
+    });
   }
 
   // Helper for menu buttons with hover effects

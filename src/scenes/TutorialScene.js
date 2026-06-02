@@ -32,6 +32,9 @@ export default class TutorialScene extends Phaser.Scene {
     this.objective2 = this.add.rectangle(250, 115, 10, 10, 0x00ff00).setDepth(100).setAlpha(.20);
     this.objective = this.add.rectangle(250, 115, 10, 10, 0x00ff00).setDepth(100).setAlpha(.20);
     this.physics.add.existing(this.objective, true);
+    this.physics.add.overlap(this.player, this.objective, () => {
+      if (this.timePeriod === 'present') this.scene.start('GameScene');
+    });
 
     this.tweens.add({
       targets: this.objective2,
@@ -41,15 +44,18 @@ export default class TutorialScene extends Phaser.Scene {
       repeat: -1
     });
 
-    // Tutorial Text
+    // Tutorial Text — setResolution matches the 2.5× camera zoom so the
+    // text canvas is pre-rendered at the correct pixel density.
+    const textRes = this.cameras.main.zoom * (window.devicePixelRatio || 1);
     this.add.text(20, 35, 'Welcome to Time Thief!\nUse arrow buttons on your left to move.\nPress the lightning button to switch time periods and\navoid obstacles.', {
-      fontSize: '10ff',
+      fontSize: '10px',
       fill: '#ffffff'
-    });
+    }).setResolution(textRes);
 
     this.setupCollisions();
     this.setupKeyboardInput();
 
+    if (this.scene.isActive('UIScene')) this.scene.stop('UIScene');
     this.scene.launch('UIScene');
     this.events.on('switchPeriod', () => this.switchTimePeriod());
     this.registry.set('timePeriod', this.timePeriod);
@@ -78,7 +84,7 @@ export default class TutorialScene extends Phaser.Scene {
   }
 
   switchTimePeriod() {
-    if (this.player.isMidAir) return;
+    if (this.player.isMidAir || this.scene.isActive('TransitionScene')) return;
 
     this.cameras.main.shake(100, 0.005);
 
@@ -98,16 +104,7 @@ export default class TutorialScene extends Phaser.Scene {
 
   update() {
     this.handleInput();
-    if (this.timePeriod === 'past') {
-      this.objective.setAlpha(.25);
-    } else {
-      this.objective.setAlpha(1);
-      this.physics.add.overlap(this.player, this.objective, () => {
-      console.log('Go to next level!');
-      this.scene.start('GameScene');
-    });
-    }
-
+    this.objective.setAlpha(this.timePeriod === 'present' ? 1 : 0.25);
   }
 
   handleInput() {

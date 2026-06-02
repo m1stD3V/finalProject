@@ -56,6 +56,8 @@ export default class UIScene extends Phaser.Scene {
           travButton.play("toPast");
         }
       }, this)
+
+    this.createMenuButton(754, 24);
   }
 
   // Create a more polished HUD for time indication
@@ -77,6 +79,33 @@ export default class UIScene extends Phaser.Scene {
     const isPast = period === 'past';
     this.periodText.setText(period.toUpperCase());
     this.periodText.setColor(isPast ? '#ffcc00' : '#44aaff');
+  }
+
+  // Small ≡ button that opens the settings overlay
+  createMenuButton(x, y) {
+    const size = 36;
+    const gfx = this.add.graphics();
+
+    const draw = (over) => {
+      gfx.clear();
+      gfx.fillStyle(0x000000, over ? 0.7 : 0.45);
+      gfx.fillRoundedRect(x - size / 2, y - size / 2, size, size, 6);
+      gfx.lineStyle(1, over ? 0x888888 : 0x555555, 1);
+      gfx.strokeRoundedRect(x - size / 2, y - size / 2, size, size, 6);
+    };
+
+    draw(false);
+    this.add.text(x, y, '≡', {
+      fontSize: '22px', color: '#ffffff', fontFamily: 'monospace'
+    }).setOrigin(0.5, 0.55);
+
+    const zone = this.add.zone(x, y, size, size).setInteractive({ useHandCursor: true });
+    zone.on('pointerover', () => draw(true));
+    zone.on('pointerout', () => draw(false));
+    zone.on('pointerdown', () => {
+      const caller = this.scene.isActive('GameScene') ? 'GameScene' : 'TutorialScene';
+      this.scene.launch('SettingsScene', { caller });
+    });
   }
 
   // Create stylized interactive buttons

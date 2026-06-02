@@ -6,6 +6,7 @@ import TutorialScene from './scenes/TutorialScene.js';
 import GameScene from './scenes/GameScene.js';
 import UIScene from './scenes/UIScene.js';
 import TransitionScene from './scenes/TransitionScene.js';
+import SettingsScene from './scenes/SettingsScene.js';
 
 // Simplified PoC configuration
 const config = {
@@ -28,8 +29,11 @@ const config = {
   pixelArt: true,
   roundPixels: true,
   antiAlias: false,
-  autoRound:true,
-  scene: [BootScene, PreloadScene, MenuScene, TutorialScene, GameScene, UIScene, TransitionScene]
+  autoRound: true,
+  // Render text canvases at the screen's native pixel density so they stay
+  // sharp when Scale.FIT stretches the game canvas to fill the window.
+  resolution: window.devicePixelRatio || 1,
+  scene: [BootScene, PreloadScene, MenuScene, TutorialScene, GameScene, UIScene, TransitionScene, SettingsScene]
 };
 
 new Phaser.Game(config);

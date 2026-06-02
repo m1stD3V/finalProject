@@ -7,6 +7,12 @@ export default class AudioManager {
     this.ctx = null;
     this.musicPlaying = false;
     this.bgMusic = null;
+    this.masterVolume = 1;
+  }
+
+  setVolume(vol) {
+    this.masterVolume = Math.min(Math.max(vol, 0), 1);
+    if (this.bgMusic) this.bgMusic.setVolume(this.masterVolume * 0.5);
   }
 
   // Initialize AudioContext
@@ -36,8 +42,9 @@ export default class AudioManager {
     osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
     
     // Quick attack and smooth decay
+    const scaledVolume = volume * this.masterVolume;
     gain.gain.setValueAtTime(0, this.ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(volume, this.ctx.currentTime + 0.01);
+    gain.gain.linearRampToValueAtTime(scaledVolume, this.ctx.currentTime + 0.01);
     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
     
     osc.connect(gain);
