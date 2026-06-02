@@ -2,6 +2,8 @@
 import BootScene from './scenes/BootScene.js';
 import PreloadScene from './scenes/PreloadScene.js';
 import MenuScene from './scenes/MenuScene.js';
+import SettingsScene from './scenes/SettingsScene.js';
+import CreditsScene from './scenes/CreditsScene.js';
 import TutorialScene from './scenes/TutorialScene.js';
 import GameScene from './scenes/GameScene.js';
 import UIScene from './scenes/UIScene.js';
@@ -29,7 +31,7 @@ const config = {
   roundPixels: true,
   antiAlias: false,
   autoRound:true,
-  scene: [BootScene, PreloadScene, MenuScene, TutorialScene, GameScene, UIScene, TransitionScene]
+  scene: [BootScene, PreloadScene, MenuScene, SettingsScene, CreditsScene, TutorialScene, GameScene, UIScene, TransitionScene]
 };
 
 new Phaser.Game(config);

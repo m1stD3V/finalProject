@@ -6,32 +6,50 @@ export default class MenuScene extends Phaser.Scene {
 
   create() {
     
-
     const w = this.cameras.main.width;
     const h = this.cameras.main.height;
 
     // Title with shadow
-    this.add.text(w / 2 + 4, h / 2 - 76, 'TIME THIEF', { 
+    this.add.text(w / 2 + 4, h / 2 - 96, 'TIME THIEF', { 
       fontSize: '64px', color: '#000000', fontFamily: 'monospace', fontStyle: 'bold' 
     }).setOrigin(0.5).setAlpha(0.3);
 
-    this.add.text(w / 2, h / 2 - 80, 'TIME THIEF', { 
+    this.add.text(w / 2, h / 2 - 100, 'TIME THIEF', { 
       fontSize: '64px', color: '#ffcc00', fontFamily: 'monospace', fontStyle: 'bold' 
     }).setOrigin(0.5);
     
     // Subtitle
-    this.add.text(w / 2, h / 2 - 20, 'Proof of Concept', { 
+    this.add.text(w / 2, h / 2 - 35, 'Proof of Concept', { 
       fontSize: '18px', color: '#aaaaaa', fontFamily: 'monospace' 
     }).setOrigin(0.5);
 
     // Interactive Start Button
-    this.createMenuButton(w / 2, h / 2 + 60, 'START GAME', () => {
+    this.createMenuButton(w / 2, h / 2 + 35, 'START GAME', () => {
       const audio = this.registry.get('audioManager');
       if (audio) {
         audio.resume();
         audio.startMusic();
       }
       this.scene.start('TutorialScene');
+    });
+
+    // Interactive Credits & Settings Buttons
+    this.createMenuButton(w / 2 - 130, h / 2 + 120, 'CREDITS', () => {
+      const audio = this.registry.get('audioManager');
+      if (audio) {
+        audio.resume();
+        audio.startMusic();
+      }      
+      this.scene.start('CreditsScene');
+    });
+
+    this.createMenuButton(w / 2 + 130, h / 2 + 120, 'SETTINGS', () => {
+      const audio = this.registry.get('audioManager');
+      if (audio) {
+        audio.resume();
+        audio.startMusic();
+      }
+      this.scene.start('SettingsScene');
     });
   }
 

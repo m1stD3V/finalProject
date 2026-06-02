@@ -7,7 +7,6 @@ export default class TutorialScene extends Phaser.Scene {
   }
 
   create() {
-    console.log('Creating TutorialScene');
     const map = this.make.tilemap({ key: 'level0', tileWidth: 16, tileHeight: 16 });
     const tileset = map.addTilesetImage('castle0', 'tiles');
 
@@ -28,23 +27,25 @@ export default class TutorialScene extends Phaser.Scene {
 
     this.createPlayer();
 
-    // Create Player Objective
-    this.objective2 = this.add.rectangle(250, 115, 10, 10, 0x00ff00).setDepth(100).setAlpha(.20);
-    this.objective = this.add.rectangle(250, 115, 10, 10, 0x00ff00).setDepth(100).setAlpha(.20);
+    // Create Player Objective & Tween it
+    this.objective2 = this.add.rectangle(250, 115, 10, 10, 0x00ff00).setDepth(100).setAlpha(.25);
+    this.objective = this.add.rectangle(250, 115, 10, 10, 0x00ff00).setDepth(100).setAlpha(.25);
     this.physics.add.existing(this.objective, true);
 
     this.tweens.add({
       targets: this.objective2,
-      alpha: 1,
+      alpha: .5,
       duration: 1000,
       yoyo: true,
       repeat: -1
     });
 
     // Tutorial Text
-    this.add.text(20, 35, 'Welcome to Time Thief!\nUse arrow buttons on your left to move.\nPress the lightning button to switch time periods and\navoid obstacles.', {
+    this.add.text(20, 35, 'Welcome to Time Thief!\nUse arrow buttons on your left to move.\nPress the clock button to switch time periods and\navoid obstacles.', {
       fontSize: '10ff',
-      fill: '#ffffff'
+      fill: '#ffffff',
+      backgroundColor: '#000000',
+      setDepth: -11
     });
 
     this.setupCollisions();
