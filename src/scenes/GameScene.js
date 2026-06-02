@@ -24,28 +24,32 @@ export default class GameScene extends Phaser.Scene {
     this.characters = this.add.group();
     this.caught = false;
     this.won = false;
+    this.invincible = false;
+    this.lives = 3;
+
+    this.registry.set('lives', this.lives);
 
     this.createPlayer();
     this.createObjective();
 
-    // Two guards — one per time period — patrolling opposite halves of the map.
     this.createGuard(Guard_Past,    500, 50, [{ x: 500,  y: 192 }, { x: 250, y: 192 }]);
     this.createGuard(Guard_Present, 320, 50, [{ x: 500, y: 192 }, { x: 360, y: 192 }]);
 
     this.setupCollisions();
     this.setupKeyboardInput();
 
-    // Apply initial period state so inactive-period guards start hidden + physics-disabled
     for (const char of this.characters.getChildren()) {
       if (char.onPeriodChange) char.onPeriodChange(this.timePeriod);
     }
 
-    // Restart UIScene so it re-binds its event listeners to this scene
     if (this.scene.isActive('UIScene')) this.scene.stop('UIScene');
     this.scene.launch('UIScene');
-    this.events.on('switchPeriod', () => this.switchTimePeriod());
     this.registry.set('timePeriod', this.timePeriod);
 
+    this.periodOverlay = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0xffddbb, 0.15)
+      .setDepth(50).setScrollFactor(0).setOrigin(0);
+
+    this.updatePeriodVisuals(this.timePeriod);
     this.cameras.main.startFollow(this.player);
   }
 
@@ -55,25 +59,18 @@ export default class GameScene extends Phaser.Scene {
   }
 
   createObjective() {
-    // Placed at the far right end — the Guard_Present patrols nearby, so the
-    // player must time their approach and switch to 'present' to trigger it.
     const ox = 490, oy = 170;
 
     this.objectiveGlow = this.add.rectangle(ox, oy, 16, 16, 0xffcc00).setDepth(99).setAlpha(0.2);
     this.tweens.add({
       targets: this.objectiveGlow,
-      alpha: 0.6,
-      scaleX: 1.4,
-      scaleY: 1.4,
-      duration: 900,
-      yoyo: true,
-      repeat: -1
+      alpha: 0.6, scaleX: 1.4, scaleY: 1.4,
+      duration: 900, yoyo: true, repeat: -1
     });
 
     this.objective = this.add.rectangle(ox, oy, 12, 12, 0xffcc00).setDepth(100).setAlpha(0.15);
     this.physics.add.existing(this.objective, true);
 
-    // Show/hide objective based on period
     this.events.on('periodChanged', (period) => {
       const active = period === 'present';
       this.objective.setAlpha(active ? 0.85 : 0.15);
@@ -92,11 +89,9 @@ export default class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.characters, this.mainLayer);
 
     for (const guard of this.guards) {
-      // Collider callback fires on contact — separates bodies AND triggers catch
-      this.physics.add.collider(this.player, guard, () => this.playerCaught());
+      this.physics.add.collider(this.player, guard, (player, hitGuard) => this.playerHit(hitGuard));
     }
 
-    // Win: player must be in 'present' to activate the objective
     this.physics.add.overlap(this.player, this.objective, () => {
       if (this.timePeriod === 'present') this.playerWon();
     });
@@ -107,15 +102,64 @@ export default class GameScene extends Phaser.Scene {
     this.tKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
   }
 
-  playerCaught() {
-    if (this.caught || this.won) return;
+  // Warm tint for past, cool tint for present — visual period distinction with no extra assets
+  updatePeriodVisuals(period) {
+    this.periodOverlay.setFillStyle(period === 'past' ? 0xffddbb : 0xbbddff, 0.15);
+  }
+
+  playerHit(guard) {
+    if (this.caught || this.won || this.invincible) return;
+
+    this.lives--;
+    this.registry.set('lives', this.lives);
+
+    if (this.lives <= 0) {
+      this.triggerGameOver();
+      return;
+    }
+
+    this.invincible = true;
+
+    // Knock the player away from the guard so they can escape
+    const dir = this.player.x < guard.x ? -1 : 1;
+    this.player.setVelocityX(dir * 260);
+    this.player.setVelocityY(-160);
+
+    this.cameras.main.shake(150, 0.007);
+    this.cameras.main.flash(100, 220, 0, 0, 0.4);
+
+    const audio = this.registry.get('audioManager');
+    if (audio) audio.playHit();
+
+    this.tweens.add({
+      targets: this.player,
+      alpha: 0,
+      duration: 80,
+      yoyo: true,
+      repeat: 7,
+      onComplete: () => {
+        this.player.setAlpha(1);
+        this.invincible = false;
+      }
+    });
+  }
+
+  triggerGameOver() {
     this.caught = true;
 
     this.player.stopMoving();
     this.player.body.enable = false;
 
+    for (const guard of this.guards) {
+      guard.stopMoving();
+      guard.body.enable = false;
+    }
+
     this.cameras.main.shake(400, 0.012);
     this.cameras.main.flash(300, 220, 0, 0, 0.6);
+
+    const audio = this.registry.get('audioManager');
+    if (audio) audio.playCaught();
 
     this.time.delayedCall(400, () => {
       this.showOverlay('CAUGHT!', '#ff4444', 'R — Try Again', () => {
@@ -132,7 +176,15 @@ export default class GameScene extends Phaser.Scene {
     this.player.stopMoving();
     this.player.body.enable = false;
 
+    for (const guard of this.guards) {
+      guard.stopMoving();
+      guard.body.enable = false;
+    }
+
     this.cameras.main.flash(600, 255, 220, 50, 0.8);
+
+    const audio = this.registry.get('audioManager');
+    if (audio) audio.playWin();
 
     this.time.delayedCall(500, () => {
       this.showOverlay('LEVEL CLEAR!', '#ffcc00', 'R — Main Menu', () => {
@@ -146,34 +198,24 @@ export default class GameScene extends Phaser.Scene {
     const view = this.cameras.main.worldView;
     const cx = view.centerX;
     const cy = view.centerY;
+    const res = this.cameras.main.zoom * (window.devicePixelRatio || 1);
 
     const bg = this.add.graphics().setDepth(200);
     bg.fillStyle(0x000000, 0.75);
     bg.fillRect(view.x, view.y, view.width, view.height);
 
-    // setResolution accounts for the 2.5× camera zoom on top of device DPR
-    const res = this.cameras.main.zoom * (window.devicePixelRatio || 1);
-
     this.add.text(cx, cy - 18, title, {
-      fontSize: '14px',
-      color: titleColor,
-      fontFamily: 'monospace',
-      fontStyle: 'bold'
+      fontSize: '14px', color: titleColor, fontFamily: 'monospace', fontStyle: 'bold'
     }).setOrigin(0.5).setDepth(201).setResolution(res);
 
     const hintText = this.add.text(cx, cy + 8, hint, {
-      fontSize: '7px',
-      color: '#cccccc',
-      fontFamily: 'monospace'
+      fontSize: '7px', color: '#cccccc', fontFamily: 'monospace'
     }).setOrigin(0.5).setDepth(201).setResolution(res);
 
     this.tweens.add({ targets: hintText, alpha: 0.2, duration: 600, yoyo: true, repeat: -1 });
 
-    // Tappable for mobile
     this.add.zone(cx, cy, view.width, view.height)
-      .setDepth(202)
-      .setInteractive()
-      .once('pointerdown', onAction);
+      .setDepth(202).setInteractive().once('pointerdown', onAction);
 
     this.input.keyboard.once('keydown-R', onAction);
   }
@@ -194,6 +236,7 @@ export default class GameScene extends Phaser.Scene {
           if (char.onPeriodChange) char.onPeriodChange(this.timePeriod);
         }
 
+        this.updatePeriodVisuals(this.timePeriod);
         this.cameras.main.flash(200, 255, 255, 255, 0.3);
 
         const audio = this.registry.get('audioManager');
@@ -213,12 +256,18 @@ export default class GameScene extends Phaser.Scene {
 
     if (this.cursors.left.isDown || uiInput.left) {
       this.player.moveLeft();
-      this.player.play('walk', true);
     } else if (this.cursors.right.isDown || uiInput.right) {
       this.player.moveRight();
-      this.player.play('walk', true);
     } else {
       this.player.stopMoving();
+    }
+
+    // Jump animation takes priority; walk/idle only when grounded
+    if (this.player.isMidAir) {
+      this.player.play('jump', true);
+    } else if (this.cursors.left.isDown || uiInput.left || this.cursors.right.isDown || uiInput.right) {
+      this.player.play('walk', true);
+    } else {
       this.player.play('idle', true);
     }
 
@@ -250,7 +299,6 @@ export default class GameScene extends Phaser.Scene {
       }
 
       if (guard.chaseRange.contains(this.player.x, this.player.y)) {
-        // Cancel any pending return-to-patrol timer and start chasing
         if (guard.cooldownTimer) {
           guard.cooldownTimer.remove();
           guard.cooldownTimer = null;
@@ -260,7 +308,6 @@ export default class GameScene extends Phaser.Scene {
       } else if (guard.patroling) {
         guard.patrol();
       } else {
-        // Just lost the player — stop and wait before resuming patrol
         guard.stopMoving();
         if (!guard.cooldownTimer) {
           guard.cooldownTimer = this.time.delayedCall(2500, () => {
