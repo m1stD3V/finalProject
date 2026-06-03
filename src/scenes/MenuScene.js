@@ -30,10 +30,10 @@ export default class MenuScene extends Phaser.Scene {
         audio.resume();
         audio.startMusic();
       }
-      this.scene.start('GameScene');
+      this.scene.start('TutorialScene');
     });
 
-    this.createMenuButton(w / 2, h / 2 + 140, 'SETTINGS', () => {
+    this.createMenuButton(w / 2 + 130, h / 2 + 120, 'SETTINGS', () => {
       this.scene.launch('SettingsScene', { caller: 'MenuScene' });
     });
 
@@ -45,15 +45,6 @@ export default class MenuScene extends Phaser.Scene {
         audio.startMusic();
       }      
       this.scene.start('CreditsScene');
-    });
-
-    this.createMenuButton(w / 2 + 130, h / 2 + 120, 'SETTINGS', () => {
-      const audio = this.registry.get('audioManager');
-      if (audio) {
-        audio.resume();
-        audio.startMusic();
-      }
-      this.scene.start('SettingsScene');
     });
   }
 
