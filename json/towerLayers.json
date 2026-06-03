@@ -1,0 +1,14 @@
+{ "columns":2,
+ "image":"..\/assets\/environment\/towerLayers.png",
+ "imageheight":16,
+ "imagewidth":128,
+ "margin":0,
+ "name":"towerLayers",
+ "spacing":0,
+ "tilecount":2,
+ "tiledversion":"1.12.2",
+ "tileheight":16,
+ "tilewidth":64,
+ "type":"tileset",
+ "version":"1.10"
+}
