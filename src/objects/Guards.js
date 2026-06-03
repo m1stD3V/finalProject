@@ -100,12 +100,12 @@ export default class Guard_Generic extends GameObject {
 
 export class Guard_Present extends Guard_Generic {
   constructor(scene, x, y, visionLength, patrolRoute) {
-    super(scene, x, y, visionLength, patrolRoute, 'present', 'player');
+    super(scene, x, y, visionLength, patrolRoute, 'present', 'clanker');
   }
 }
 
 export class Guard_Past extends Guard_Generic {
   constructor(scene, x, y, visionLength, patrolRoute) {
-    super(scene, x, y, visionLength, patrolRoute, 'past', 'player');
+    super(scene, x, y, visionLength, patrolRoute, 'past', 'clanker');
   }
 }

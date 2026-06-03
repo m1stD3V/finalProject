@@ -12,6 +12,15 @@
             }
         ]
     },
+    "enemySprites": {
+        "defaultType": "image",
+        "files": [
+            {
+                "key": "clanker",
+                "url": "assets/enemies/clanker.png"
+            }
+        ]
+    },
     "tileSprites": {
         "defaultType": "spritesheet",
         "files": [

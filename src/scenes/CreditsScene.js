@@ -8,7 +8,6 @@ export default class CreditsScene extends Phaser.Scene {
     const w = this.cameras.main.width;
     const h = this.cameras.main.height;
 
-    console.log('Creating CreditsScene');
     this.add.text(20, 20, 'CREDITS', { fontSize: '32px', color: '#ffcc00', fontFamily: 'monospace', fontStyle: 'bold' });
     this.add.text(w / 2 + 15, h / 2 - 35, 'Developed by...\n\nErnie Jennison, Waheed Khan,\n\nEvangel Hightower-Rojas, Serena Heath,\n\nJoshua Peterson', { fontSize: '24px', color: '#ffffff', fontFamily: 'monospace', align: 'center' }).setOrigin(0.5);
     this.createMenuButton(w / 2 + 130, h / 2 + 120, 'Back', () => {
@@ -19,7 +18,7 @@ export default class CreditsScene extends Phaser.Scene {
       }
       this.scene.start('MenuScene');
     });
-}
+  }
 
   createMenuButton(x, y, label, callback) {
     const bg = this.add.graphics();
@@ -42,5 +41,5 @@ export default class CreditsScene extends Phaser.Scene {
     zone.on('pointerover', () => draw(true));
     zone.on('pointerout', () => draw(false));
     zone.on('pointerdown', callback);
-}
+  }
 }
