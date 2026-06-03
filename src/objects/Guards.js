@@ -4,7 +4,7 @@ export default class Guard_Generic extends GameObject {
   constructor(scene, x, y, visionSize, patrolRoute, timePeriod, texture) {
     super(scene, x, y, texture, { period: timePeriod, type: 'enemy' });
     this.setCollideWorldBounds(true);
-    this.speed = 80;
+    this.speed = 60;
     this.jumpForce = -400;
     // Negative value: how many px above this guard it can jump to reach a target
     this.verticalReach = this.height * (Math.abs(this.jumpForce) / 100) - this.height;
@@ -68,23 +68,23 @@ export default class Guard_Generic extends GameObject {
   setPatrolRoute(route) {
     this.patrolRoute = route;
     this.patrolPhase = 0;
+    this.patrolDir = 1;
   }
 
   /**
    * Walk between waypoints. Uses horizontal distance only so guards don't
    * get stuck trying to match a Y coordinate they can never reach on foot.
+   * Direction bounces at both ends without mutating the route array.
    */
   patrol() {
     const destination = this.patrolRoute[this.patrolPhase];
     const distX = Math.abs(destination.x - this.x);
 
     if (distX <= this.width) {
-      // Reached this waypoint — advance or reverse the route
-      if (this.patrolPhase === this.patrolRoute.length - 1) {
-        this.patrolPhase = 0;
-        this.patrolRoute.reverse();
-      } else {
-        this.patrolPhase++;
+      this.patrolPhase += this.patrolDir;
+      if (this.patrolPhase < 0 || this.patrolPhase >= this.patrolRoute.length) {
+        this.patrolDir *= -1;
+        this.patrolPhase += this.patrolDir * 2;
       }
     } else {
       this.chase(destination);

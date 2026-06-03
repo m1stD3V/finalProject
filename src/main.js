@@ -8,6 +8,7 @@ import TutorialScene from './scenes/TutorialScene.js';
 import GameScene from './scenes/GameScene.js';
 import UIScene from './scenes/UIScene.js';
 import TransitionScene from './scenes/TransitionScene.js';
+import SettingsScene from './scenes/SettingsScene.js';
 
 // Simplified PoC configuration
 const config = {
@@ -31,6 +32,7 @@ const config = {
   roundPixels: true,
   antiAlias: false,
   autoRound:true,
+  resolution: window.devicePixelRatio || 1,
   scene: [BootScene, PreloadScene, MenuScene, SettingsScene, CreditsScene, TutorialScene, GameScene, UIScene, TransitionScene]
 };
 
