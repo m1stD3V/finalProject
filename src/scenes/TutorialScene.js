@@ -29,7 +29,7 @@ export default class TutorialScene extends Phaser.Scene {
     this.objective = this.add.rectangle(250, 115, 10, 10, 0x00ff00).setDepth(100).setAlpha(0.2);
     this.physics.add.existing(this.objective, true);
     this.physics.add.overlap(this.player, this.objective, () => {
-      if (this.timePeriod === 'present') this.scene.start('GameScene');
+      if (this.timePeriod === 'present') this.scene.start('Level1Scene');
     });
 
     this.tweens.add({ targets: [this.objectiveGlow, this.objective], alpha: 0.9, duration: 500, yoyo: true, scale: 1.2, repeat: -1 });
@@ -46,9 +46,9 @@ export default class TutorialScene extends Phaser.Scene {
     // Initialise lives in registry so the UIScene hearts display correctly
     this.registry.set('lives', 3);
 
-    if (this.scene.isActive('UIScene')) this.scene.stop('UIScene');
-    this.scene.launch('UIScene');
     this.registry.set('timePeriod', this.timePeriod);
+    if (this.scene.isActive('UIScene')) this.scene.stop('UIScene');
+    this.scene.launch('UIScene', { caller: this.scene.key });
 
     this.periodOverlay = this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0xffddbb, 0.15)
       .setDepth(50).setScrollFactor(0).setOrigin(0);

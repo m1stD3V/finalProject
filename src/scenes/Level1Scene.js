@@ -1,10 +1,10 @@
 import { LEVELS } from '../levelData.js';
 import Player from '../objects/Player.js';
-import { Guard_Present, Guard_Past } from '../objects/Guards.js';
+import { Guard_Past } from '../objects/Guards.js';
 
-export default class GameScene extends Phaser.Scene {
+export default class Level1Scene extends Phaser.Scene {
   constructor() {
-    super('GameScene');
+    super('Level1Scene');
   }
 
   create() {
@@ -19,7 +19,7 @@ export default class GameScene extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, 560, 224);
 
     this.timePeriod = 'past';
-    this.level = LEVELS[0];
+    this.level = LEVELS[1];
     this.guards = [];
     this.characters = this.add.group();
     this.caught = false;
@@ -30,10 +30,9 @@ export default class GameScene extends Phaser.Scene {
     this.registry.set('lives', this.lives);
 
     this.createPlayer();
-    this.createObjective();
+    this.createObjective(420, 170);
 
-    this.createGuard(Guard_Past,    500, 50, [{ x: 500,  y: 192 }, { x: 250, y: 192 }]);
-    this.createGuard(Guard_Present, 320, 50, [{ x: 500, y: 192 }, { x: 360, y: 192 }]);
+    this.createGuard(Guard_Past, 450, 50, [{ x: 450, y: 192 }, { x: 300, y: 192 }]);
 
     this.setupCollisions();
     this.setupKeyboardInput();
@@ -58,9 +57,7 @@ export default class GameScene extends Phaser.Scene {
     this.characters.add(this.player);
   }
 
-  createObjective() {
-    const ox = 490, oy = 170;
-
+  createObjective(ox, oy) {
     this.objectiveGlow = this.add.rectangle(ox, oy, 16, 16, 0xffcc00).setDepth(99).setAlpha(0.2);
     this.tweens.add({
       targets: this.objectiveGlow,
@@ -102,7 +99,6 @@ export default class GameScene extends Phaser.Scene {
     this.tKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
   }
 
-  // Warm tint for past, cool tint for present — visual period distinction with no extra assets
   updatePeriodVisuals(period) {
     this.periodOverlay.setFillStyle(period === 'past' ? 0xffddbb : 0xbbddff, 0.15);
   }
@@ -120,7 +116,6 @@ export default class GameScene extends Phaser.Scene {
 
     this.invincible = true;
 
-    // Knock the player away from the guard so they can escape
     const dir = this.player.x < guard.x ? -1 : 1;
     this.player.setVelocityX(dir * 260);
     this.player.setVelocityY(-160);
@@ -187,9 +182,9 @@ export default class GameScene extends Phaser.Scene {
     if (audio) audio.playWin();
 
     this.time.delayedCall(500, () => {
-      this.showOverlay('LEVEL CLEAR!', '#ffcc00', 'R — Main Menu', () => {
+      this.showOverlay('LEVEL 1 CLEAR!', '#ffcc00', 'R — Next Level', () => {
         this.scene.stop('UIScene');
-        this.scene.start('MenuScene');
+        this.scene.start('Level2Scene');
       });
     });
   }
@@ -262,7 +257,6 @@ export default class GameScene extends Phaser.Scene {
       this.player.stopMoving();
     }
 
-    // Jump animation takes priority; walk/idle only when grounded
     if (this.player.isMidAir) {
       this.player.play('jump', true);
     } else if (this.cursors.left.isDown || uiInput.left || this.cursors.right.isDown || uiInput.right) {
@@ -285,11 +279,6 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  /**
-   * Each frame: active-period guards chase the player when in range, patrol
-   * otherwise, and wait briefly after losing sight before resuming patrol.
-   * Guards outside the current time period freeze in place.
-   */
   manageGuards() {
     for (const guard of this.guards) {
       if (!guard.isActiveInPeriod(this.timePeriod)) {

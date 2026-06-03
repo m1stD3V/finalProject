@@ -11,12 +11,14 @@ export default class UIScene extends Phaser.Scene {
     this.load.spritesheet('timeButt', 'UI/button_timeTravel.png', { frameWidth: 32, frameHeight: 32 });
   }
 
+  init(data) {
+    this.callerKey = data?.caller ?? 'GameScene';
+  }
+
   create() {
     this.registry.set('uiInput', { left: false, right: false, jumpPressed: false, timeTravelPressed: false });
 
-    // Bind to whichever game scene launched UIScene so events work in both Tutorial and Game
-    const callerKey = this.scene.isActive('GameScene') ? 'GameScene' : 'TutorialScene';
-    const caller = this.scene.get(callerKey);
+    const caller = this.scene.get(this.callerKey);
 
     this.createHUD(caller);
     this.createLivesDisplay();
@@ -112,8 +114,7 @@ export default class UIScene extends Phaser.Scene {
     zone.on('pointerover', () => draw(true));
     zone.on('pointerout',  () => draw(false));
     zone.on('pointerdown', () => {
-      const caller = this.scene.isActive('GameScene') ? 'GameScene' : 'TutorialScene';
-      this.scene.launch('SettingsScene', { caller });
+      this.scene.launch('SettingsScene', { caller: this.callerKey });
     });
   }
 
