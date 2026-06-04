@@ -7,10 +7,14 @@ export default class SettingsScene extends Phaser.Scene {
     this.callerKey = data.caller || 'SettingsScene';
   }
 
+  static get GAMEPLAY_SCENES() {
+    return ['GameScene', 'TutorialScene', 'Level1Scene', 'Level2Scene', 'Level3Scene'];
+  }
+
   create() {
     const W = this.cameras.main.width;
     const H = this.cameras.main.height;
-    const inGame = this.callerKey === 'GameScene' || this.callerKey === 'TutorialScene';
+    const inGame = SettingsScene.GAMEPLAY_SCENES.includes(this.callerKey);
 
     // Dim the scene underneath
     const dim = this.add.graphics();
@@ -44,7 +48,7 @@ export default class SettingsScene extends Phaser.Scene {
 
     // Reset always nukes all game scenes and returns to menu
     this.createButton(W / 2, py + 200, 'RESET GAME', 0x4a1a1a, '#ff8888', () => {
-      ['SettingsScene', 'UIScene', 'TransitionScene', 'GameScene', 'TutorialScene'].forEach(key => {
+      [...SettingsScene.GAMEPLAY_SCENES, 'SettingsScene', 'UIScene', 'TransitionScene'].forEach(key => {
         if (this.scene.isActive(key) || this.scene.isPaused(key)) this.scene.stop(key);
       });
       this.scene.start('MenuScene');
@@ -58,7 +62,7 @@ export default class SettingsScene extends Phaser.Scene {
   }
 
   close() {
-    const inGame = this.callerKey === 'GameScene' || this.callerKey === 'TutorialScene';
+    const inGame = SettingsScene.GAMEPLAY_SCENES.includes(this.callerKey);
     if (inGame) {
       // Clear stale mobile input so the player doesn't lurch on resume
       const ui = this.registry.get('uiInput');

@@ -13,11 +13,15 @@
         ]
     },
     "enemySprites": {
-        "defaultType": "image",
+        "defaultType": "spritesheet",
         "files": [
             {
                 "key": "clanker",
-                "url": "assets/enemies/clanker.png"
+                "url": "assets/enemies/clanker.png",
+                "frameConfig": {
+                    "frameWidth": 32,
+                    "frameHeight": 32
+                }
             }
         ]
     },

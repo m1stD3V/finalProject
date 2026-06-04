@@ -18,17 +18,20 @@ export default class Guard_Generic extends GameObject {
   moveLeft() {
     this.setVelocityX(-this.speed);
     this.setFlipX(true);
+    this.play('guard_walk', true);
     this.fixVisionRing();
   }
 
   moveRight() {
     this.setVelocityX(this.speed);
     this.setFlipX(false);
+    this.play('guard_walk', true);
     this.fixVisionRing();
   }
 
   stopMoving() {
     this.setVelocityX(0);
+    this.play('guard_idle', true);
     this.fixVisionRing();
   }
 

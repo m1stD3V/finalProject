@@ -115,6 +115,7 @@ export default class UIScene extends Phaser.Scene {
     zone.on('pointerout',  () => draw(false));
     zone.on('pointerdown', () => {
       this.scene.launch('SettingsScene', { caller: this.callerKey });
+      this.scene.bringToTop('SettingsScene');
     });
   }
 
