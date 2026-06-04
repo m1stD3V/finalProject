@@ -116,9 +116,9 @@ export default class AudioManager {
     this.musicPlaying = true;
 
     // Use the loaded asset if available, otherwise fall back to the synth loop
-    if (this.scene.cache.audio.exists('mainTheme')) {
+    if (this.scene.cache.audio.exists('levelTheme')) {
       if (!this.bgMusic) {
-        this.bgMusic = this.scene.sound.add('mainTheme', { loop: true, volume: this.masterVolume * 0.5 });
+        this.bgMusic = this.scene.sound.add('levelTheme', { loop: true, volume: this.masterVolume * 0.5 });
       }
       this.bgMusic.play();
     } else {

@@ -4,7 +4,11 @@
         "files": [
             {
                 "key": "mainTheme",
-                "url": "assets/audio/mainTheme.wav"
+                "url": "assets/audio/mainTheme.mp3"
+            },
+            {
+                "key": "levelTheme",
+                "url": "assets/audio/levelTheme.mp3"
             }
         ]
     }
