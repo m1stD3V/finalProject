@@ -88,7 +88,7 @@ finalProject/
 │
 ├── src/
 │   ├── main.js                   # Phaser.Game config (800×448, WebGL, Arcade Physics)
-│   ├── levelData.js              # LEVELS array — tile grids for past/present per level
+│   ├── levelData.js              # LEVELS array — full per-level descriptors (map key, tileset, layers, guards, objective, win/next scene)
 │   │
 │   ├── objects/                  # Game object class hierarchy
 │   │   ├── GameObject.js         # Base class — period-awareness, shared movement
@@ -99,11 +99,11 @@ finalProject/
 │   │   ├── BootScene.js          # Bootstraps into PreloadScene
 │   │   ├── PreloadScene.js       # Asset loading, animation creation, studio intro
 │   │   ├── MenuScene.js          # Title screen and navigation
-│   │   ├── TutorialScene.js      # Introductory level with guided mechanics
-│   │   ├── GameScene.js          # Core gameplay loop — input, guards, time switching
-│   │   ├── Level1Scene.js
-│   │   ├── Level2Scene.js
-│   │   ├── Level3Scene.js
+│   │   ├── TutorialScene.js      # Standalone introductory level with tutorial text and no guards
+│   │   ├── GameScene.js          # Engine base class — builds any level from a LevelConfig; handles input, guards, collisions, time switching, win/lose
+│   │   ├── Level1Scene.js        # Extends GameScene; provides LEVELS[1] config
+│   │   ├── Level2Scene.js        # Extends GameScene; provides LEVELS[2] config
+│   │   ├── Level3Scene.js        # Extends GameScene; provides LEVELS[3] config
 │   │   ├── UIScene.js            # Parallel HUD overlay + mobile touch buttons
 │   │   ├── TransitionScene.js    # Fade-to-black transition for time travel
 │   │   ├── SettingsScene.js      # Volume slider and options menu
@@ -243,17 +243,20 @@ classDiagram
     }
 
     class GameScene {
+        +cfg : LevelConfig
         +timePeriod : string
         +player : Player
         +guards : Guard_Generic[]
         +lives : number
         +caught : boolean
         +won : boolean
-        +constructor() [override]
+        +constructor(key) [override]
+        +getLevelConfig() LevelConfig
         +create() [override]
         +update() [override]
+        +setupLayers(map, tileset)
         +createPlayer()
-        +createObjective()
+        +createObjective(ox, oy)
         +createGuard(GuardClass, x, y, patrolRoute, visionSize)
         +setupCollisions()
         +setupKeyboardInput()
@@ -265,6 +268,21 @@ classDiagram
         +switchTimePeriod()
         +handleInput()
         +manageGuards()
+    }
+
+    class Level1Scene {
+        +constructor() [override]
+        +getLevelConfig() LevelConfig
+    }
+
+    class Level2Scene {
+        +constructor() [override]
+        +getLevelConfig() LevelConfig
+    }
+
+    class Level3Scene {
+        +constructor() [override]
+        +getLevelConfig() LevelConfig
     }
 
     class TutorialScene {
@@ -323,6 +341,10 @@ classDiagram
     PhaserScene <|-- UIScene
     PhaserScene <|-- TransitionScene
     PhaserScene <|-- SettingsScene
+
+    GameScene   <|-- Level1Scene
+    GameScene   <|-- Level2Scene
+    GameScene   <|-- Level3Scene
 
     %% ─── Composition / usage ─────────────────────────────────────────────────
     PreloadScene  ..> AudioManager : creates

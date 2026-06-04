@@ -109,17 +109,20 @@ classDiagram
     }
 
     class GameScene {
+        +cfg : LevelConfig
         +timePeriod : string
         +player : Player
         +guards : Guard_Generic[]
         +lives : number
         +caught : boolean
         +won : boolean
-        +constructor() [override]
+        +constructor(key) [override]
+        +getLevelConfig() LevelConfig
         +create() [override]
         +update() [override]
+        +setupLayers(map, tileset)
         +createPlayer()
-        +createObjective()
+        +createObjective(ox, oy)
         +createGuard(GuardClass, x, y, patrolRoute, visionSize)
         +setupCollisions()
         +setupKeyboardInput()
@@ -131,6 +134,21 @@ classDiagram
         +switchTimePeriod()
         +handleInput()
         +manageGuards()
+    }
+
+    class Level1Scene {
+        +constructor() [override]
+        +getLevelConfig() LevelConfig
+    }
+
+    class Level2Scene {
+        +constructor() [override]
+        +getLevelConfig() LevelConfig
+    }
+
+    class Level3Scene {
+        +constructor() [override]
+        +getLevelConfig() LevelConfig
     }
 
     class TutorialScene {
@@ -190,6 +208,10 @@ classDiagram
     PhaserScene <|-- TransitionScene
     PhaserScene <|-- SettingsScene
 
+    GameScene   <|-- Level1Scene
+    GameScene   <|-- Level2Scene
+    GameScene   <|-- Level3Scene
+
     %% ─── Composition / usage ─────────────────────────────────────────────────
     PreloadScene  ..> AudioManager : creates
     GameScene     o-- Player       : owns
@@ -223,8 +245,11 @@ classDiagram
 | `BootScene` | `Phaser.Scene` | Bootstraps the scene pipeline; immediately starts `PreloadScene` |
 | `PreloadScene` | `Phaser.Scene` | Loads all assets, defines player animations, shows studio intro, creates `AudioManager` |
 | `MenuScene` | `Phaser.Scene` | Title screen with START GAME and SETTINGS buttons |
-| `GameScene` | `Phaser.Scene` | Core gameplay: tilemap, player, guards, collision, input, time-period switching, win/lose states |
-| `TutorialScene` | `Phaser.Scene` | Simplified playable intro level with on-screen instructions and no guards |
+| `GameScene` | `Phaser.Scene` | Engine base class: reads a `LevelConfig` from `getLevelConfig()` and builds the tilemap, player, guards, collisions, input, time-period switching, and win/lose states. Subclassed by every playable level. |
+| `Level1Scene` | `GameScene` | Overrides `getLevelConfig()` to return `LEVELS[1]`; inherits all engine logic |
+| `Level2Scene` | `GameScene` | Overrides `getLevelConfig()` to return `LEVELS[2]`; inherits all engine logic |
+| `Level3Scene` | `GameScene` | Overrides `getLevelConfig()` to return `LEVELS[3]`; inherits all engine logic |
+| `TutorialScene` | `Phaser.Scene` | Standalone introductory level with on-screen instructions, a green objective, and no guards or game-over state |
 | `UIScene` | `Phaser.Scene` | HUD overlay (period indicator, lives), mobile touch buttons, in-game menu button |
 | `TransitionScene` | `Phaser.Scene` | Fade-to-black / fade-from-black overlay used during time-period switches |
 | `SettingsScene` | `Phaser.Scene` | Pause overlay with volume slider and reset-to-menu button |
