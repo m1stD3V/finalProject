@@ -10,8 +10,8 @@ All assets used in this project, with creation credits and sourcing information.
 
 | File | Description | Origin |
 |------|-------------|--------|
-| `assets/audio/mainTheme.wav` | Title-screen background music loop | Created by [Team Member] using [Tool] |
-| `assets/audio/levelTheme.wav` | In-level background music loop | Created by [Team Member] using [Tool] |
+| `assets/audio/mainTheme.wav` | Title-screen background music loop | Created by Joshua Peterson using FL Studio |
+| `assets/audio/levelTheme.wav` | In-level background music loop | Created by Joshua Peterson using FL Studio |
 
 > **Note:** All in-game sound effects (jump, time-switch, caught, win) are synthesized at runtime via the Web Audio API — no audio files are used for SFX. See `src/systems/AudioManager.js`.
 
@@ -19,7 +19,7 @@ All assets used in this project, with creation credits and sourcing information.
 
 ## Player Sprites
 
-All player frames were created by [Team Member] using [Tool].
+All player frames were created by Joshua Peterson using Aseprite.
 
 | File | Description |
 |------|-------------|
@@ -39,13 +39,13 @@ All player frames were created by [Team Member] using [Tool].
 
 | File | Description | Origin |
 |------|-------------|--------|
-| `assets/enemies/clanker.png` | Robot guard sprite | Created by [Team Member] using [Tool] |
+| `assets/enemies/clanker.png` | Robot guard sprite | Created by Joshua Peterson using Aseprite |
 
 ---
 
 ## Environment / Tileset Graphics
 
-All environment tiles and tilesets were created by [Team Member] using [Tool].
+All environment tiles and tilesets were created by Joshua Peterson using Aseprite.
 
 | File | Description |
 |------|-------------|
@@ -81,7 +81,7 @@ All UI button images were created by [Team Member] using [Tool].
 
 ## Level Data (JSON)
 
-All tilemap JSON files were exported from [Tiled Map Editor](https://www.mapeditor.org/) by [Team Member]. Asset-loader and music-loader manifests were written by hand.
+All tilemap JSON files were exported from [Tiled Map Editor](https://www.mapeditor.org/) by Joshua Peterson AND [add team member]. Asset-loader and music-loader manifests were written by hand.
 
 | File | Description |
 |------|-------------|
