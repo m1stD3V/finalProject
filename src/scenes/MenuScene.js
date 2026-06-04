@@ -30,7 +30,7 @@ export default class MenuScene extends Phaser.Scene {
         audio.resume();
         audio.startMusic();
       }
-      this.scene.start('Level1Scene'); //TutorialScene
+      this.scene.start('Level0Scene');
     });
 
     this.createMenuButton(w / 2 + 130, h / 2 + 120, 'SETTINGS', () => {

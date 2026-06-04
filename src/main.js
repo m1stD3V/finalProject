@@ -6,6 +6,7 @@ import SettingsScene from './scenes/SettingsScene.js';
 import CreditsScene from './scenes/CreditsScene.js';
 import TutorialScene from './scenes/TutorialScene.js';
 import GameScene from './scenes/GameScene.js';
+import Level0Scene from './scenes/Level0Scene.js';
 import Level1Scene from './scenes/Level1Scene.js';
 import Level2Scene from './scenes/Level2Scene.js';
 import Level3Scene from './scenes/Level3Scene.js';
@@ -35,7 +36,7 @@ const config = {
   antiAlias: false,
   autoRound:true,
   resolution: window.devicePixelRatio || 1,
-  scene: [BootScene, PreloadScene, MenuScene, SettingsScene, CreditsScene, TutorialScene, GameScene, Level1Scene, Level2Scene, Level3Scene, UIScene, TransitionScene]
+  scene: [BootScene, PreloadScene, MenuScene, SettingsScene, CreditsScene, TutorialScene, GameScene, Level0Scene, Level1Scene, Level2Scene, Level3Scene, UIScene, TransitionScene]
 };
 
 new Phaser.Game(config);

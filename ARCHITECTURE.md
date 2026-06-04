@@ -136,6 +136,11 @@ classDiagram
         +manageGuards()
     }
 
+    class Level0Scene {
+        +constructor() [override]
+        +getLevelConfig() LevelConfig
+    }
+
     class Level1Scene {
         +constructor() [override]
         +getLevelConfig() LevelConfig
@@ -208,6 +213,7 @@ classDiagram
     PhaserScene <|-- TransitionScene
     PhaserScene <|-- SettingsScene
 
+    GameScene   <|-- Level0Scene
     GameScene   <|-- Level1Scene
     GameScene   <|-- Level2Scene
     GameScene   <|-- Level3Scene
@@ -246,6 +252,7 @@ classDiagram
 | `PreloadScene` | `Phaser.Scene` | Loads all assets, defines player animations, shows studio intro, creates `AudioManager` |
 | `MenuScene` | `Phaser.Scene` | Title screen with START GAME and SETTINGS buttons |
 | `GameScene` | `Phaser.Scene` | Engine base class: reads a `LevelConfig` from `getLevelConfig()` and builds the tilemap, player, guards, collisions, input, time-period switching, and win/lose states. Subclassed by every playable level. |
+| `Level0Scene` | `GameScene` | Overrides `getLevelConfig()` to return `LEVELS[0]`; inherits all engine logic |
 | `Level1Scene` | `GameScene` | Overrides `getLevelConfig()` to return `LEVELS[1]`; inherits all engine logic |
 | `Level2Scene` | `GameScene` | Overrides `getLevelConfig()` to return `LEVELS[2]`; inherits all engine logic |
 | `Level3Scene` | `GameScene` | Overrides `getLevelConfig()` to return `LEVELS[3]`; inherits all engine logic |

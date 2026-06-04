@@ -101,6 +101,7 @@ finalProject/
 │   │   ├── MenuScene.js          # Title screen and navigation
 │   │   ├── TutorialScene.js      # Standalone introductory level with tutorial text and no guards
 │   │   ├── GameScene.js          # Engine base class — builds any level from a LevelConfig; handles input, guards, collisions, time switching, win/lose
+│   │   ├── Level0Scene.js        # Extends GameScene; provides LEVELS[0] config
 │   │   ├── Level1Scene.js        # Extends GameScene; provides LEVELS[1] config
 │   │   ├── Level2Scene.js        # Extends GameScene; provides LEVELS[2] config
 │   │   ├── Level3Scene.js        # Extends GameScene; provides LEVELS[3] config
@@ -270,6 +271,12 @@ classDiagram
         +manageGuards()
     }
 
+    
+    class Level0Scene {
+        +constructor() [override]
+        +getLevelConfig() LevelConfig
+    }
+
     class Level1Scene {
         +constructor() [override]
         +getLevelConfig() LevelConfig
@@ -342,6 +349,7 @@ classDiagram
     PhaserScene <|-- TransitionScene
     PhaserScene <|-- SettingsScene
 
+    GameScene   <|-- Level0Scene
     GameScene   <|-- Level1Scene
     GameScene   <|-- Level2Scene
     GameScene   <|-- Level3Scene
