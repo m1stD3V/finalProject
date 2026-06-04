@@ -2,24 +2,79 @@ export const LEVELS = [
   {
     id: 0,
     name: 'PoC Level',
+    mapKey: 'level0',
+    tilesetName: 'castle0',
+    tilesetKey: 'tiles',
+    layerMode: 'simple',
+    layers: { bg: 'bg', main: 'main' },
+    worldWidth: 560, worldHeight: 224,
     playerStart: { x: 100, y: 100 },
+    objectivePos: { x: 490, y: 170 },
+    guards: [
+      { type: 'past',    x: 500, y: 50, route: [{ x: 500, y: 192 }, { x: 250, y: 192 }] },
+      { type: 'present', x: 320, y: 50, route: [{ x: 500, y: 192 }, { x: 360, y: 192 }] },
+    ],
+    winTitle: 'LEVEL CLEAR!',
+    nextScene: 'MenuScene',
   },
   {
     id: 1,
     name: 'Level 1',
+    mapKey: 'level1',
+    tilesetName: 'levelTileset',
+    tilesetKey: 'tiles',
+    layerMode: 'period-split',
+    layers: {
+      pastBg: 'past_bg', pastNoCollide: 'past_nocollide', pastMain: 'past_main',
+      presentBg: 'present_bg', presentNoCollide: 'present_nocollide', presentMain: 'present_main',
+    },
+    worldWidth: 560, worldHeight: 224,
     playerStart: { x: 50, y: 170 },
-    objectivePos: {x: 420, y: 170},//{x: 458, y:246 }
+    objectivePos: { x: 420, y: 170 },
+    guards: [
+      { type: 'past', x: 450, y: 50, route: [{ x: 450, y: 192 }, { x: 300, y: 192 }] },
+    ],
+    winTitle: 'LEVEL 1 CLEAR!',
+    nextScene: 'Level2Scene',
   },
   {
     id: 2,
     name: 'Level 2',
+    mapKey: 'level2',
+    tilesetName: 'levelTileset',
+    tilesetKey: 'tiles',
+    layerMode: 'period-split',
+    layers: {
+      pastBg: 'past/past_bg', pastNoCollide: 'past/past_nocollide', pastMain: 'past/past_main',
+      presentBg: 'present/present_bg', presentNoCollide: 'present/present_nocollide', presentMain: 'present/present_main',
+    },
+    worldWidth: 560, worldHeight: 224,
     playerStart: { x: 50, y: 100 },
-    objectivePos: { x: 420, y: 170 }
+    objectivePos: { x: 420, y: 170 },
+    guards: [
+      { type: 'past', x: 450, y: 50, route: [{ x: 450, y: 192 }, { x: 300, y: 192 }] },
+    ],
+    winTitle: 'LEVEL 2 CLEAR!',
+    nextScene: 'Level3Scene',
   },
   {
     id: 3,
     name: 'Level 3',
+    mapKey: 'level3',
+    tilesetName: 'levelTileset',
+    tilesetKey: 'tiles',
+    layerMode: 'period-split',
+    layers: {
+      pastBg: 'past/past_bg', pastNoCollide: 'past/past_nocollide', pastMain: 'past/past_main',
+      presentBg: 'present/present_bg', presentNoCollide: 'present/present_nocollide', presentMain: 'present/present_main',
+    },
+    worldWidth: 560, worldHeight: 224,
     playerStart: { x: 50, y: 170 },
-    objectivePos: { x: 420, y: 170 }
+    objectivePos: { x: 420, y: 170 },
+    guards: [
+      { type: 'past', x: 450, y: 50, route: [{ x: 450, y: 192 }, { x: 300, y: 192 }] },
+    ],
+    winTitle: 'LEVEL 3 CLEAR!',
+    nextScene: 'MenuScene',
   },
 ];

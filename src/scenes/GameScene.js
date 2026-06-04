@@ -2,24 +2,30 @@ import { LEVELS } from '../levelData.js';
 import Player from '../objects/Player.js';
 import { Guard_Present, Guard_Past } from '../objects/Guards.js';
 
+const GUARD_CLASSES = { past: Guard_Past, present: Guard_Present };
+
 export default class GameScene extends Phaser.Scene {
-  constructor() {
-    super('GameScene');
+  constructor(key = 'GameScene') {
+    super(key);
+  }
+
+  getLevelConfig() {
+    return LEVELS[0];
   }
 
   create() {
-    const map = this.make.tilemap({ key: 'level0', tileWidth: 16, tileHeight: 16 });
-    const tileset = map.addTilesetImage('castle0', 'tiles');
+    this.cfg = this.getLevelConfig();
+    const { cfg } = this;
 
-    this.bgLayer = map.createLayer('bg', tileset, 0, 0);
-    this.mainLayer = map.createLayer('main', tileset, 0, 0);
+    const map = this.make.tilemap({ key: cfg.mapKey, tileWidth: 16, tileHeight: 16 });
+    const tileset = map.addTilesetImage(cfg.tilesetName, cfg.tilesetKey);
+    this.setupLayers(map, tileset);
 
     this.cameras.main.zoom = 2.5;
-    this.cameras.main.setBounds(0, 0, 560, 224);
-    this.physics.world.setBounds(0, 0, 560, 224);
+    this.cameras.main.setBounds(0, 0, cfg.worldWidth, cfg.worldHeight);
+    this.physics.world.setBounds(0, 0, cfg.worldWidth, cfg.worldHeight);
 
     this.timePeriod = 'past';
-    this.level = LEVELS[0];
     this.guards = [];
     this.characters = this.add.group();
     this.caught = false;
@@ -30,10 +36,11 @@ export default class GameScene extends Phaser.Scene {
     this.registry.set('lives', this.lives);
 
     this.createPlayer();
-    this.createObjective();
+    this.createObjective(cfg.objectivePos.x, cfg.objectivePos.y);
 
-    this.createGuard(Guard_Past,    500, 50, [{ x: 500,  y: 192 }, { x: 250, y: 192 }]);
-    this.createGuard(Guard_Present, 320, 50, [{ x: 500, y: 192 }, { x: 360, y: 192 }]);
+    for (const g of cfg.guards) {
+      this.createGuard(GUARD_CLASSES[g.type], g.x, g.y, g.route, g.visionSize);
+    }
 
     this.setupCollisions();
     this.setupKeyboardInput();
@@ -53,19 +60,32 @@ export default class GameScene extends Phaser.Scene {
     this.cameras.main.startFollow(this.player);
   }
 
+  setupLayers(map, tileset) {
+    const { layers, layerMode } = this.cfg;
+    if (layerMode === 'simple') {
+      this.bgLayer = map.createLayer(layers.bg, tileset, 0, 0);
+      this.mainLayer = map.createLayer(layers.main, tileset, 0, 0);
+    } else {
+      this.pastBg = map.createLayer(layers.pastBg, tileset, 0, 0);
+      this.pastNoCollide = map.createLayer(layers.pastNoCollide, tileset, 0, 0);
+      this.pastMain = map.createLayer(layers.pastMain, tileset, 0, 0);
+      this.presentBg = map.createLayer(layers.presentBg, tileset, 0, 0);
+      this.presentNoCollide = map.createLayer(layers.presentNoCollide, tileset, 0, 0);
+      this.presentMain = map.createLayer(layers.presentMain, tileset, 0, 0);
+    }
+  }
+
   createPlayer() {
-    this.player = new Player(this, this.level.playerStart.x, this.level.playerStart.y);
+    this.player = new Player(this, this.cfg.playerStart.x, this.cfg.playerStart.y);
     this.characters.add(this.player);
   }
 
-  createObjective() {
-    const ox = 490, oy = 170;
-
+  createObjective(ox, oy) {
     this.objectiveGlow = this.add.rectangle(ox, oy, 16, 16, 0xffcc00).setDepth(99).setAlpha(0.2);
     this.tweens.add({
       targets: this.objectiveGlow,
       alpha: 0.6, scaleX: 1.4, scaleY: 1.4,
-      duration: 900, yoyo: true, repeat: -1
+      duration: 900, yoyo: true, repeat: -1,
     });
 
     this.objective = this.add.rectangle(ox, oy, 12, 12, 0xffcc00).setDepth(100).setAlpha(0.15);
@@ -85,8 +105,17 @@ export default class GameScene extends Phaser.Scene {
   }
 
   setupCollisions() {
-    this.mainLayer.setCollisionByExclusion([-1]);
-    this.physics.add.collider(this.characters, this.mainLayer);
+    if (this.cfg.layerMode === 'simple') {
+      this.mainLayer.setCollisionByExclusion([-1]);
+      this.physics.add.collider(this.characters, this.mainLayer);
+    } else {
+      const tileIndexes = Array.from({ length: 132 }, (_, i) => i);
+      this.presentMain.setCollision(tileIndexes);
+      this.pastMain.setCollision(tileIndexes);
+      this.presentCollision = this.physics.add.collider(this.characters, this.presentMain);
+      this.pastCollision = this.physics.add.collider(this.characters, this.pastMain);
+      this.presentCollision.active = false;
+    }
 
     for (const guard of this.guards) {
       this.physics.add.collider(this.player, guard, (player, hitGuard) => this.playerHit(hitGuard));
@@ -102,9 +131,18 @@ export default class GameScene extends Phaser.Scene {
     this.tKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
   }
 
-  // Warm tint for past, cool tint for present — visual period distinction with no extra assets
   updatePeriodVisuals(period) {
     this.periodOverlay.setFillStyle(period === 'past' ? 0xffddbb : 0xbbddff, 0.15);
+
+    if (this.cfg.layerMode === 'period-split') {
+      const inPresent = period === 'present';
+      this.presentMain.setVisible(inPresent);
+      this.presentNoCollide.setVisible(inPresent);
+      this.presentBg.setVisible(inPresent);
+      this.pastMain.setVisible(!inPresent);
+      this.pastNoCollide.setVisible(!inPresent);
+      this.pastBg.setVisible(!inPresent);
+    }
   }
 
   playerHit(guard) {
@@ -120,7 +158,6 @@ export default class GameScene extends Phaser.Scene {
 
     this.invincible = true;
 
-    // Knock the player away from the guard so they can escape
     const dir = this.player.x < guard.x ? -1 : 1;
     this.player.setVelocityX(dir * 260);
     this.player.setVelocityY(-160);
@@ -140,7 +177,7 @@ export default class GameScene extends Phaser.Scene {
       onComplete: () => {
         this.player.setAlpha(1);
         this.invincible = false;
-      }
+      },
     });
   }
 
@@ -187,9 +224,9 @@ export default class GameScene extends Phaser.Scene {
     if (audio) audio.playWin();
 
     this.time.delayedCall(500, () => {
-      this.showOverlay('LEVEL CLEAR!', '#ffcc00', 'R — Main Menu', () => {
+      this.showOverlay(this.cfg.winTitle, '#ffcc00', 'R — Continue', () => {
         this.scene.stop('UIScene');
-        this.scene.start('MenuScene');
+        this.scene.start(this.cfg.nextScene);
       });
     });
   }
@@ -205,11 +242,11 @@ export default class GameScene extends Phaser.Scene {
     bg.fillRect(view.x, view.y, view.width, view.height);
 
     this.add.text(cx, cy - 18, title, {
-      fontSize: '14px', color: titleColor, fontFamily: 'monospace', fontStyle: 'bold'
+      fontSize: '14px', color: titleColor, fontFamily: 'monospace', fontStyle: 'bold',
     }).setOrigin(0.5).setDepth(201).setResolution(res);
 
     const hintText = this.add.text(cx, cy + 8, hint, {
-      fontSize: '7px', color: '#cccccc', fontFamily: 'monospace'
+      fontSize: '7px', color: '#cccccc', fontFamily: 'monospace',
     }).setOrigin(0.5).setDepth(201).setResolution(res);
 
     this.tweens.add({ targets: hintText, alpha: 0.2, duration: 600, yoyo: true, repeat: -1 });
@@ -237,11 +274,17 @@ export default class GameScene extends Phaser.Scene {
         }
 
         this.updatePeriodVisuals(this.timePeriod);
+
+        if (this.cfg.layerMode === 'period-split') {
+          this.presentCollision.active = this.timePeriod === 'present';
+          this.pastCollision.active = this.timePeriod === 'past';
+        }
+
         this.cameras.main.flash(200, 255, 255, 255, 0.3);
 
         const audio = this.registry.get('audioManager');
         if (audio) audio.playTimeSwitch();
-      }
+      },
     });
   }
 
@@ -262,7 +305,6 @@ export default class GameScene extends Phaser.Scene {
       this.player.stopMoving();
     }
 
-    // Jump animation takes priority; walk/idle only when grounded
     if (this.player.isMidAir) {
       this.player.play('jump', true);
     } else if (this.cursors.left.isDown || uiInput.left || this.cursors.right.isDown || uiInput.right) {
@@ -285,11 +327,6 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  /**
-   * Each frame: active-period guards chase the player when in range, patrol
-   * otherwise, and wait briefly after losing sight before resuming patrol.
-   * Guards outside the current time period freeze in place.
-   */
   manageGuards() {
     for (const guard of this.guards) {
       if (!guard.isActiveInPeriod(this.timePeriod)) {
