@@ -6,7 +6,7 @@
  "name":"levelTileset",
  "spacing":0,
  "tilecount":132,
- "tiledversion":"1.12.1",
+ "tiledversion":"1.12.2",
  "tileheight":16,
  "tilewidth":16,
  "type":"tileset",
