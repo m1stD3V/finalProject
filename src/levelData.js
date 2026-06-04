@@ -8,6 +8,7 @@ export const LEVELS = [
     layerMode: 'simple',
     layers: { bg: 'bg', main: 'main' },
     worldWidth: 560, worldHeight: 224,
+    cameraWidth: 560, cameraHeight: 224,
     playerStart: { x: 100, y: 100 },
     objectivePos: { x: 490, y: 170 },
     guards: [
@@ -28,7 +29,8 @@ export const LEVELS = [
       pastBg: 'past_bg', pastNoCollide: 'past_nocollide', pastMain: 'past_main',
       presentBg: 'present_bg', presentNoCollide: 'present_nocollide', presentMain: 'present_main',
     },
-    worldWidth: 560, worldHeight: 224,
+    worldWidth: 560, worldHeight: 280,
+    cameraWidth: 560, cameraHeight: 224,
     playerStart: { x: 50, y: 170 },
     objectivePos: { x: 420, y: 170 },
     guards: [
@@ -49,6 +51,7 @@ export const LEVELS = [
       presentBg: 'present/present_bg', presentNoCollide: 'present/present_nocollide', presentMain: 'present/present_main',
     },
     worldWidth: 560, worldHeight: 224,
+    cameraWidth: 560, cameraHeight: 224,
     playerStart: { x: 50, y: 100 },
     objectivePos: { x: 420, y: 170 },
     guards: [
@@ -69,6 +72,7 @@ export const LEVELS = [
       presentBg: 'present/present_bg', presentNoCollide: 'present/present_nocollide', presentMain: 'present/present_main',
     },
     worldWidth: 560, worldHeight: 224,
+    cameraWidth: 560, cameraHeight: 224,
     playerStart: { x: 50, y: 170 },
     objectivePos: { x: 420, y: 170 },
     guards: [

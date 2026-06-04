@@ -22,7 +22,7 @@ export default class GameScene extends Phaser.Scene {
     this.setupLayers(map, tileset);
 
     this.cameras.main.zoom = 2.5;
-    this.cameras.main.setBounds(0, 0, cfg.worldWidth, cfg.worldHeight);
+    this.cameras.main.setBounds(0, 0, cfg.cameraWidth, cfg.cameraHeight);
     this.physics.world.setBounds(0, 0, cfg.worldWidth, cfg.worldHeight);
 
     this.timePeriod = 'past';
