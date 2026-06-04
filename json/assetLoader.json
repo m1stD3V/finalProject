@@ -19,7 +19,7 @@
                 "key": "clanker",
                 "url": "assets/enemies/clanker.png",
                 "frameConfig": {
-                    "frameWidth": 32,
+                    "frameWidth": 24,
                     "frameHeight": 32
                 }
             }

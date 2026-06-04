@@ -52,15 +52,15 @@ export default class PreloadScene extends Phaser.Scene {
 
         this.anims.create({
           key: 'guard_walk',
-          frames: this.anims.generateFrameNumbers('clanker', { start: 0, end: 5 }),
-          frameRate: 8,
+          frames: this.anims.generateFrameNumbers('clanker', { start: 4, end: 7 }),
+          frameRate: 12,
           repeat: -1
         });
 
         this.anims.create({
           key: 'guard_idle',
-          frames: this.anims.generateFrameNumbers('clanker', { start: 0, end: 0 }),
-          frameRate: 1,
+          frames: this.anims.generateFrameNumbers('clanker', { start: 0, end: 3 }),
+          frameRate: 4,
           repeat: -1
         });
 
