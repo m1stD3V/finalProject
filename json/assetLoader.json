@@ -26,7 +26,7 @@
         "files": [
             {   
                 "key": "tiles",
-                "url": "assets/environment/levelTileset0.png",
+                "url": "assets/environment/levelTileset.png",
                 "frameConfig": {
                     "frameWidth": 16,
                     "frameHeight": 16

@@ -8,18 +8,25 @@ export default class Level2Scene extends Phaser.Scene {
   }
 
   create() {
-    const map = this.make.tilemap({ key: 'level0', tileWidth: 16, tileHeight: 16 });
-    const tileset = map.addTilesetImage('castle0', 'tiles');
+    const map = this.make.tilemap({ key: 'level2', tileWidth: 16, tileHeight: 16 });
+    const tileset = map.addTilesetImage('levelTileset', 'tiles');
 
-    this.bgLayer = map.createLayer('bg', tileset, 0, 0);
-    this.mainLayer = map.createLayer('main', tileset, 0, 0);
+    this.pastBg = map.createLayer('past/past_bg', tileset, 0, 0);
+    this.pastNoCollide = map.createLayer('past/past_nocollide', tileset, 0, 0);
+    this.pastMain = map.createLayer('past/past_main', tileset, 0, 0);
+    this.presentBg = map.createLayer('present/present_bg', tileset, 0, 0);
+    this.presentNoCollide = map.createLayer('present/present_nocollide', tileset, 0, 0);
+    this.presentMain = map.createLayer('present/present_main', tileset, 0, 0);
+
+    // Debug
+    console.log(this.pastMain);
 
     this.cameras.main.zoom = 2.5;
     this.cameras.main.setBounds(0, 0, 560, 224);
     this.physics.world.setBounds(0, 0, 560, 224);
 
     this.timePeriod = 'past';
-    this.level = LEVELS[2];
+    this.level = LEVELS[1];
     this.guards = [];
     this.characters = this.add.group();
     this.caught = false;
@@ -30,10 +37,9 @@ export default class Level2Scene extends Phaser.Scene {
     this.registry.set('lives', this.lives);
 
     this.createPlayer();
-    this.createObjective(380, 170);
+    this.createObjective(this.level.objectivePos.x, this.level.objectivePos.y);
 
-    this.createGuard(Guard_Past,    500, 50, [{ x: 500, y: 192 }, { x: 200, y: 192 }]);
-    this.createGuard(Guard_Present, 380, 50, [{ x: 380, y: 192 }, { x: 150, y: 192 }]);
+    this.createGuard(Guard_Past, 450, 50, [{ x: 450, y: 192 }, { x: 300, y: 192 }]);
 
     this.setupCollisions();
     this.setupKeyboardInput();
@@ -83,8 +89,15 @@ export default class Level2Scene extends Phaser.Scene {
   }
 
   setupCollisions() {
-    this.mainLayer.setCollisionByExclusion([-1]);
-    this.physics.add.collider(this.characters, this.mainLayer);
+    const tileIndexes = [];
+    for (let i = 0; i < 132; i++) {tileIndexes.push(i);}
+    this.presentMain.setCollision(tileIndexes);
+    this.pastMain.setCollision(tileIndexes);
+    this.presentCollision = this.physics.add.collider(this.characters, this.presentMain);
+    this.pastCollision = this.physics.add.collider(this.characters, this.pastMain);
+    this.presentCollision.active = false;
+    // Debug
+    console.log(`presentCollision.active: ${this.presentCollision.active}\npastCollision.active: ${this.pastCollision.active}`);
 
     for (const guard of this.guards) {
       this.physics.add.collider(this.player, guard, (player, hitGuard) => this.playerHit(hitGuard));
@@ -102,6 +115,22 @@ export default class Level2Scene extends Phaser.Scene {
 
   updatePeriodVisuals(period) {
     this.periodOverlay.setFillStyle(period === 'past' ? 0xffddbb : 0xbbddff, 0.15);
+
+    if (period == "present") {
+      this.presentMain.setVisible(true);
+      this.presentNoCollide.setVisible(true);
+      this.presentBg.setVisible(true);
+      this.pastMain.setVisible(false);
+      this.pastNoCollide.setVisible(false);
+      this.pastBg.setVisible(false);
+    } else {
+      this.presentMain.setVisible(false);
+      this.presentNoCollide.setVisible(false);
+      this.presentBg.setVisible(false);
+      this.pastMain.setVisible(true);
+      this.pastNoCollide.setVisible(true);
+      this.pastBg.setVisible(true);
+    }
   }
 
   playerHit(guard) {
@@ -183,7 +212,7 @@ export default class Level2Scene extends Phaser.Scene {
     if (audio) audio.playWin();
 
     this.time.delayedCall(500, () => {
-      this.showOverlay('LEVEL 2 CLEAR!', '#ffcc00', 'R — Next Level', () => {
+      this.showOverlay('LEVEL 1 CLEAR!', '#ffcc00', 'R — Next Level', () => {
         this.scene.stop('UIScene');
         this.scene.start('Level3Scene');
       });
@@ -233,6 +262,17 @@ export default class Level2Scene extends Phaser.Scene {
         }
 
         this.updatePeriodVisuals(this.timePeriod);
+      
+        // if (this.timePeriod == "present") {
+        //   this.presentMain.setCollisionByExclusion([0, 1, 2, 3, 4]);
+        // } else {
+        //   this.presentMain.setCollisionByExclusion([0, 1, 3, 4, 5]);
+        // }
+        this.presentCollision.active = (this.timePeriod == "present") ? true : false;
+        this.pastCollision.active = (this.timePeriod == "past") ? true : false;
+        // Debug
+        console.log(`presentCollision.active: ${this.presentCollision.active}\npastCollision.active: ${this.pastCollision.active}`);
+
         this.cameras.main.flash(200, 255, 255, 255, 0.3);
 
         const audio = this.registry.get('audioManager');
@@ -245,6 +285,11 @@ export default class Level2Scene extends Phaser.Scene {
     if (this.caught || this.won) return;
     this.handleInput();
     this.manageGuards();
+    // Debug
+    let mouse = this.input.activePointer;
+    if (mouse.isDown == true) {
+      console.log(`Player: (${Math.trunc(this.player.x)}, ${Math.trunc(this.player.y)}\nObjective: (${Math.trunc(this.objective.x)}, ${Math.trunc(this.objective.y)})\nMouse: (${Math.trunc(mouse.worldX)}, ${Math.trunc(mouse.worldY)})`);
+    }
   }
 
   handleInput() {

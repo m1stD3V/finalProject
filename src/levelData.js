@@ -8,15 +8,18 @@ export const LEVELS = [
     id: 1,
     name: 'Level 1',
     playerStart: { x: 50, y: 170 },
+    objectivePos: {x: 420, y: 170},//{x: 458, y:246 }
   },
   {
     id: 2,
     name: 'Level 2',
     playerStart: { x: 50, y: 100 },
+    objectivePos: { x: 420, y: 170 }
   },
   {
     id: 3,
     name: 'Level 3',
     playerStart: { x: 50, y: 170 },
+    objectivePos: { x: 420, y: 170 }
   },
 ];
