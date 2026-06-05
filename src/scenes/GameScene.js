@@ -92,7 +92,7 @@ export default class GameScene extends Phaser.Scene {
     this.physics.add.existing(this.objective, true);
 
     this.events.on('periodChanged', (period) => {
-      const active = period === 'present';
+      const active = period === this.cfg.objectivePeriod;
       this.objective.setAlpha(active ? 0.85 : 0.15);
       this.objectiveGlow.setAlpha(active ? 0.2 : 0.04);
     });
@@ -122,7 +122,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     this.physics.add.overlap(this.player, this.objective, () => {
-      if (this.timePeriod === 'present') this.playerWon();
+      if (this.timePeriod === this.cfg.objectivePeriod) this.playerWon();
     });
   }
 
@@ -292,6 +292,11 @@ export default class GameScene extends Phaser.Scene {
     if (this.caught || this.won) return;
     this.handleInput();
     this.manageGuards();
+    // Debug
+    let mouse = this.input.activePointer;
+    if (mouse.isDown == true) {
+      console.log(`Player: (${Math.trunc(this.player.x)}, ${Math.trunc(this.player.y)})\nObjective: (${Math.trunc(this.objective.x)}, ${Math.trunc(this.objective.y)})\nMouse: (${Math.trunc(mouse.worldX)}, ${Math.trunc(mouse.worldY)})`);
+    }
   }
 
   handleInput() {

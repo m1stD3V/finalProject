@@ -68,7 +68,7 @@ All environment tiles and tilesets were created by Joshua Peterson using Aseprit
 
 ## UI Graphics
 
-All UI button images were created by [Team Member] using [Tool].
+All UI button images were created by Serena Heath using Aseprite.
 
 | File | Description |
 |------|-------------|
@@ -81,7 +81,7 @@ All UI button images were created by [Team Member] using [Tool].
 
 ## Level Data (JSON)
 
-All tilemap JSON files were exported from [Tiled Map Editor](https://www.mapeditor.org/) by Joshua Peterson AND [add team member]. Asset-loader and music-loader manifests were written by hand.
+All tilemap JSON files were exported from [Tiled Map Editor](https://www.mapeditor.org/) by Joshua Peterson and Serena Heath. Asset-loader and music-loader manifests were written by hand.
 
 | File | Description |
 |------|-------------|
@@ -97,6 +97,7 @@ All tilemap JSON files were exported from [Tiled Map Editor](https://www.mapedit
 | `json/towerLayers.json` | Tileset metadata for the tower body layers |
 | `json/towerTop.json` | Tileset metadata for the tower top |
 | `json/levelExample.json` | Example / prototype level map (development reference) |
-| `json/longLevel0.json` | Extended level map for level 0 |
+| `json/level3.json` | Tiled tilemap — Level 3 of final game — Designed by Serena Heath |
+| `json/longLevel0.json` | Extended level map for level 0 — Designed by Joshua Peterson |
 | `json/assetLoader.json` | Manifest that maps asset keys to file paths for Phaser's loader |
 | `json/musicLoader.json` | Manifest that maps music keys to audio file paths |

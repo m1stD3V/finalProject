@@ -13,7 +13,7 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.tilemapTiledJSON('level0', 'json/longLevel0.json');
     this.load.tilemapTiledJSON('level1', 'json/castleMap1.json');
     this.load.tilemapTiledJSON('level2', 'json/castleMap2.json');
-    this.load.tilemapTiledJSON('level3', 'json/castleMap3.json');
+    this.load.tilemapTiledJSON('level3', 'json/level3.json');
   }
 
   // Create the loading UI and initialize game systems
