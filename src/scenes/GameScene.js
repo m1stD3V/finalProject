@@ -280,6 +280,8 @@ export default class GameScene extends Phaser.Scene {
         if (this.cfg.layerMode === 'period-split') {
           this.presentCollision.active = this.timePeriod === 'present';
           this.pastCollision.active = this.timePeriod === 'past';
+          // Zero velocity so the freshly-activated tile layer can resolve overlap cleanly
+          this.player.setVelocityY(0);
         }
 
         this.cameras.main.flash(200, 255, 255, 255, 0.3);
@@ -321,7 +323,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     if (Phaser.Input.Keyboard.JustDown(this.cursors.up) || uiInput.jumpPressed) {
-      if (this.player.jump()) {
+      if (!this.scene.isActive('TransitionScene') && this.player.jump()) {
         const audio = this.registry.get('audioManager');
         if (audio) audio.playJump();
       }
