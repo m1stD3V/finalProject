@@ -97,7 +97,7 @@ All tilemap JSON files were exported from [Tiled Map Editor](https://www.mapedit
 | `json/towerLayers.json` | Tileset metadata for the tower body layers |
 | `json/towerTop.json` | Tileset metadata for the tower top |
 | `json/levelExample.json` | Example / prototype level map (development reference) |
-| `json/level3.json` | Tiled tilemap — Level 3 of final game — Designed by Serena Heath |
-| `json/longLevel0.json` | Extended level map for level 0 — Designed by Joshua Peterson |
+| `json/level3.json` | Tiled tilemap — Level 3 of final game |
+| `json/longLevel0.json` | Extended level map for level 0 |
 | `json/assetLoader.json` | Manifest that maps asset keys to file paths for Phaser's loader |
 | `json/musicLoader.json` | Manifest that maps music keys to audio file paths |

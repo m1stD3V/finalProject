@@ -31,6 +31,9 @@ const config = {
       debug: false
     }
   },
+  input: {
+    activePointers: 2
+  },
   pixelArt: true,
   roundPixels: true,
   antiAlias: false,
