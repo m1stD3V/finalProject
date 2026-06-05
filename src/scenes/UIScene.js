@@ -23,9 +23,9 @@ export default class UIScene extends Phaser.Scene {
     this.createHUD(caller);
     this.createLivesDisplay();
 
-    const UIScale = 3;
+    const UIScale = 4;
     this.createButton(80,  380, 'left',       'leftButt',  UIScale);
-    this.createButton(180, 380, 'right',       'rightButt', UIScale);
+    this.createButton(220, 380, 'right',       'rightButt', UIScale);
     this.createButton(720, 380, 'jump',        'jumpButt',  UIScale);
 
     if (!this.anims.exists('toPresent')) {
@@ -43,7 +43,7 @@ export default class UIScene extends Phaser.Scene {
       });
     }
 
-    const travButton = this.createButton(610, 380, 'timeTravel', 'timeButt', 0.9 * UIScale);
+    const travButton = this.createButton(590, 380, 'timeTravel', 'timeButt', 0.9 * UIScale);
     const onPeriodChanged = (period) => {
       if (travButton && travButton.anims) {
         travButton.play(period === 'present' ? 'toPresent' : 'toPast');
