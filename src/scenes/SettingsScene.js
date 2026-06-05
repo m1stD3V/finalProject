@@ -8,7 +8,7 @@ export default class SettingsScene extends Phaser.Scene {
   }
 
   static get GAMEPLAY_SCENES() {
-    return ['GameScene', 'TutorialScene', 'Level1Scene', 'Level2Scene', 'Level3Scene'];
+    return ['GameScene', 'TutorialScene', 'Level0Scene', 'Level1Scene', 'Level2Scene', 'Level3Scene'];
   }
 
   create() {
@@ -22,7 +22,7 @@ export default class SettingsScene extends Phaser.Scene {
     dim.fillRect(0, 0, W, H);
 
     // Panel
-    const pw = 340, ph = 300;
+    const pw = 340, ph = 350;
     const px = (W - pw) / 2;
     const py = (H - ph) / 2;
 
@@ -54,7 +54,15 @@ export default class SettingsScene extends Phaser.Scene {
       this.scene.start('MenuScene');
     });
 
-    this.createButton(W / 2, py + 255, 'BACK', 0x2a2a2a, '#cccccc', () => this.close());
+    this.createButton(W / 2, py + 255, `FULLSCREEN: ${(this.scale.isFullscreen) ? "ON" : "OFF"}`, 0x2a2a2a, '#cccccc', () => {
+      if (this.scale.isFullscreen) {
+        this.scale.stopFullscreen();
+      } else {
+        this.scale.startFullscreen();
+      }
+    });
+
+    this.createButton(W / 2, py + 310, 'BACK', 0x2a2a2a, '#cccccc', () => this.close());
 
     this.input.keyboard.once('keydown-ESC', () => this.close());
 
