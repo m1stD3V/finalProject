@@ -6,6 +6,9 @@ export default class Guard_Generic extends GameObject {
     this.setCollideWorldBounds(true);
     this.speed = 60;
     this.jumpForce = -400;
+    // Trim hitbox to visible character; offset aligns it bottom-center in the 24x32 frame
+    this.body.setSize(14, 26, false);
+    this.body.setOffset(5, 6);
     // Negative value: how many px above this guard it can jump to reach a target
     this.verticalReach = this.height * (Math.abs(this.jumpForce) / 100) - this.height;
     this.chaseRange = new Phaser.Geom.Ellipse(x, y, visionSize, visionSize);

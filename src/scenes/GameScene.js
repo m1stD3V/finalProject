@@ -24,6 +24,8 @@ export default class GameScene extends Phaser.Scene {
     this.cameras.main.zoom = 2.5;
     this.cameras.main.setBounds(0, 0, cfg.cameraWidth, cfg.cameraHeight);
     this.physics.world.setBounds(0, 0, cfg.worldWidth, cfg.worldHeight);
+    // Increase tile bias to reduce edge-case tunneling at high velocities (default is 16)
+    this.physics.world.TILE_BIAS = 32;
 
     this.timePeriod = 'past';
     this.guards = [];
