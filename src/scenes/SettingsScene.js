@@ -16,45 +16,46 @@ export default class SettingsScene extends Phaser.Scene {
     const H = this.cameras.main.height;
     const inGame = SettingsScene.GAMEPLAY_SCENES.includes(this.callerKey);
 
-    // Dim the scene underneath
+    // Dim the scene underneath (keeps the castle menu faintly visible behind)
     const dim = this.add.graphics();
-    dim.fillStyle(0x000000, 0.78);
+    dim.fillStyle(0x05060d, 0.74);
     dim.fillRect(0, 0, W, H);
 
-    // Panel
+    // Panel — stone with gold trim
     const pw = 340, ph = 350;
     const px = (W - pw) / 2;
     const py = (H - ph) / 2;
 
     const panel = this.add.graphics();
-    panel.fillStyle(0x1c1c1c, 1);
+    panel.fillStyle(0x14182a, 1);
     panel.fillRoundedRect(px, py, pw, ph, 12);
-    panel.lineStyle(2, 0x444444, 1);
+    panel.lineStyle(2, 0xc9a23a, 1);
     panel.strokeRoundedRect(px, py, pw, ph, 12);
 
     this.add.text(W / 2, py + 32, 'SETTINGS', {
-      fontSize: '26px', color: '#ffffff', fontFamily: 'monospace', fontStyle: 'bold'
-    }).setOrigin(0.5);
+      fontSize: '26px', color: '#f5c518', fontFamily: 'monospace', fontStyle: 'bold'
+    }).setOrigin(0.5).setShadow(2, 2, '#000000', 0);
 
+    // Gold divider
     const div = this.add.graphics();
-    div.lineStyle(1, 0x3a3a3a, 1);
-    div.lineBetween(px + 24, py + 58, px + pw - 24, py + 58);
+    div.lineStyle(2, 0xc9a23a, 0.7);
+    div.lineBetween(px + 28, py + 58, px + pw - 28, py + 58);
 
     this.add.text(W / 2, py + 85, 'VOLUME', {
-      fontSize: '12px', color: '#888888', fontFamily: 'monospace'
+      fontSize: '12px', color: '#9aa3b8', fontFamily: 'monospace'
     }).setOrigin(0.5);
 
     this.createVolumeSlider(W / 2, py + 120);
 
     // Reset always nukes all game scenes and returns to menu
-    this.createButton(W / 2, py + 200, 'RESET GAME', 0x4a1a1a, '#ff8888', () => {
+    this.createButton(W / 2, py + 200, 'RESET GAME', true, () => {
       [...SettingsScene.GAMEPLAY_SCENES, 'SettingsScene', 'UIScene', 'TransitionScene'].forEach(key => {
         if (this.scene.isActive(key) || this.scene.isPaused(key)) this.scene.stop(key);
       });
       this.scene.start('MenuScene');
     });
 
-    this.createButton(W / 2, py + 255, `FULLSCREEN: ${(this.scale.isFullscreen) ? "ON" : "OFF"}`, 0x2a2a2a, '#cccccc', () => {
+    this.createButton(W / 2, py + 255, `FULLSCREEN: ${(this.scale.isFullscreen) ? "ON" : "OFF"}`, false, () => {
       if (this.scale.isFullscreen) {
         this.scale.stopFullscreen();
       } else {
@@ -62,7 +63,7 @@ export default class SettingsScene extends Phaser.Scene {
       }
     });
 
-    this.createButton(W / 2, py + 310, 'BACK', 0x2a2a2a, '#cccccc', () => this.close());
+    this.createButton(W / 2, py + 310, 'BACK', false, () => this.close());
 
     this.input.keyboard.once('keydown-ESC', () => this.close());
 
@@ -89,7 +90,7 @@ export default class SettingsScene extends Phaser.Scene {
 
     const gfx = this.add.graphics();
     const valueLabel = this.add.text(cx + 118, cy, '', {
-      fontSize: '12px', color: '#aaaaaa', fontFamily: 'monospace'
+      fontSize: '12px', color: '#f5c518', fontFamily: 'monospace'
     }).setOrigin(0, 0.5);
 
     const x0 = cx - trackW / 2;
@@ -99,12 +100,14 @@ export default class SettingsScene extends Phaser.Scene {
       const hx = x0 + vol * trackW;
 
       gfx.clear();
-      gfx.fillStyle(0x3a3a3a, 1);
+      gfx.fillStyle(0x2a2f42, 1);
       gfx.fillRoundedRect(x0, cy - trackH / 2, trackW, trackH, 3);
-      gfx.fillStyle(0x44aaff, 1);
+      gfx.fillStyle(0xf5c518, 1);
       gfx.fillRoundedRect(x0, cy - trackH / 2, vol * trackW, trackH, 3);
-      gfx.fillStyle(0xffffff, 1);
+      gfx.fillStyle(0xf5c518, 1);
       gfx.fillCircle(hx, cy, 9);
+      gfx.fillStyle(0xfff1c0, 1);
+      gfx.fillCircle(hx, cy, 4);
 
       valueLabel.setText(`${Math.round(vol * 100)}%`);
       if (audio) audio.setVolume(vol);
@@ -118,26 +121,34 @@ export default class SettingsScene extends Phaser.Scene {
     this.input.on('pointerup', () => { dragging = false; });
   }
 
-  createButton(x, y, label, bgHex, textColor, callback) {
+  // danger=true -> red-toned (Reset); otherwise gold-trimmed stone
+  createButton(x, y, label, danger, callback) {
     const bw = 220, bh = 44;
-    const gfx = this.add.graphics();
+    const fill = danger ? 0x3a1416 : 0x1c2030;
+    const fillOver = danger ? 0x4a1a1c : 0x262c3e;
+    const trim = danger ? 0xc0524f : 0xc9a23a;
+    const trimOver = danger ? 0xff7a7a : 0xf5c518;
+    const baseColor = danger ? '#ff9a9a' : '#d7dbe6';
 
+    const gfx = this.add.graphics();
     const draw = (over) => {
       gfx.clear();
-      gfx.fillStyle(bgHex, 1);
+      gfx.fillStyle(over ? fillOver : fill, 1);
       gfx.fillRoundedRect(x - bw / 2, y - bh / 2, bw, bh, 8);
-      gfx.lineStyle(2, over ? 0x888888 : 0x404040, 1);
+      gfx.lineStyle(2, over ? trimOver : trim, 1);
       gfx.strokeRoundedRect(x - bw / 2, y - bh / 2, bw, bh, 8);
     };
-
     draw(false);
-    this.add.text(x, y, label, {
-      fontSize: '15px', color: textColor, fontFamily: 'monospace', fontStyle: 'bold'
+
+    const text = this.add.text(x, y, label, {
+      fontSize: '15px', color: baseColor, fontFamily: 'monospace', fontStyle: 'bold'
     }).setOrigin(0.5);
 
     const zone = this.add.zone(x, y, bw, bh).setInteractive({ useHandCursor: true });
-    zone.on('pointerover', () => draw(true));
-    zone.on('pointerout', () => draw(false));
+    zone.on('pointerover', () => { draw(true); text.setColor('#ffffff'); });
+    zone.on('pointerout', () => { draw(false); text.setColor(baseColor); });
     zone.on('pointerdown', callback);
+
+    return text;
   }
 }
