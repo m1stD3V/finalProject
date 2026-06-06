@@ -1,88 +1,113 @@
-// Polished Menu for PoC
+// Time Thief menu — castle background pass
 export default class MenuScene extends Phaser.Scene {
   constructor() {
     super('MenuScene');
   }
-  
-  preload() {
-    this.load.image('menuBackground', 'assets/UI/menu_background.png');
-  }
 
   create() {
-
-    // Background Image
-    this.add.image(400, 224, 'menuBackground').setScale(1.5).setAlpha(0.8).setOrigin(0.5, 0.5);
-    
     const w = this.cameras.main.width;
     const h = this.cameras.main.height;
+    const groundY = h - 92;
 
-    // Title with shadow
-    this.add.text(w / 2 + 4, h / 2 - 96, 'TIME THIEF', { 
-      fontSize: '64px', color: '#000000', fontFamily: 'monospace', fontStyle: 'bold' 
-    }).setOrigin(0.5).setAlpha(0.3);
+    this.buildSky(w, h);
+    this.buildCastle(w, groundY);
+    this.buildGround(w, h, groundY);
+    this.buildTitle(w, h);
+    this.buildButtons(w, h);
+  }
 
-    this.add.text(w / 2, h / 2 - 100, 'TIME THIEF', { 
-      fontSize: '64px', color: '#ffcc00', fontFamily: 'monospace', fontStyle: 'bold' 
-    }).setOrigin(0.5);
-    
-    // Subtitle
-    let subtitle = this.add.text(w / 2 + 100, h / 2 - 70, 'Time traveling puzzle platformer madness!', { 
-      fontSize: '18px', color: '#aaaaaa', fontFamily: 'monospace' 
-    }).setOrigin(0.5).setAngle(-10);
+  buildSky(w, h) {
+    const g = this.add.graphics().setDepth(0);
+    g.fillGradientStyle(0x222a4a, 0x222a4a, 0x070912, 0x070912, 1);
+    g.fillRect(0, 0, w, h);
+  }
 
-    this.tweens.add({
-      targets: subtitle,
-      scale: 1.05,
-      duration: 500,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut'
-    });
+  buildCastle(w, groundY) {
+    const g = this.add.graphics().setDepth(3);
+    const win = 0xffb347;
+    this.tower(g, -10, groundY, 150, 230, 0x05070f, win);
+    this.tower(g, w - 140, groundY, 150, 252, 0x04050c, win);
 
-    // Interactive Start Button
-    this.createMenuButton(w / 2, h / 2 + 35, 'START GAME', () => {
+    const keepW = 260, keepX = (w - keepW) / 2, keepH = 150;
+    g.fillStyle(0x070a16, 1);
+    g.fillRect(keepX, groundY - keepH, keepW, keepH);
+    this.battlements(g, keepX, groundY - keepH, keepW, 28, 15, 0x070a16);
+
+    g.fillStyle(0x05060d, 1);
+    g.fillRect(keepX + keepW / 2 - 28, groundY - 70, 56, 70);
+    g.fillCircle(keepX + keepW / 2, groundY - 70, 28);
+
+    g.fillStyle(win, 0.85);
+    g.fillRect(keepX + 40, groundY - 96, 8, 14);
+    g.fillRect(keepX + keepW - 48, groundY - 96, 8, 14);
+  }
+
+  tower(g, x, groundY, towerW, towerH, color, win) {
+    g.fillStyle(color, 1);
+    g.fillRect(x, groundY - towerH, towerW, towerH);
+    this.battlements(g, x, groundY - towerH, towerW, 24, 13, color);
+    g.fillStyle(win, 0.8);
+    g.fillRect(x + towerW / 2 - 4, groundY - towerH + 70, 8, 14);
+  }
+
+  battlements(g, x, topY, width, merlonW, merlonH, color) {
+    g.fillStyle(color, 1);
+    for (let mx = x; mx < x + width; mx += merlonW * 2) {
+      g.fillRect(mx, topY - merlonH, merlonW, merlonH);
+    }
+  }
+
+  buildGround(w, h, groundY) {
+    const g = this.add.graphics().setDepth(5);
+    g.fillStyle(0x0a0d1c, 1);
+    g.fillRect(0, groundY, w, h - groundY);
+    g.lineStyle(1, 0x161a2b, 0.8);
+    for (let x = 0; x < w; x += 48) g.lineBetween(x, groundY + 6, x, h);
+    g.lineBetween(0, groundY + 6, w, groundY + 6);
+  }
+
+  buildTitle(w, h) {
+    this.add.text(w / 2 + 5, 102, 'TIME THIEF', {
+      fontSize: '64px', color: '#000000', fontFamily: 'monospace', fontStyle: 'bold',
+    }).setOrigin(0.5).setDepth(10).setAlpha(0.5);
+    this.add.text(w / 2, 96, 'TIME THIEF', {
+      fontSize: '64px', color: '#f5c518', fontFamily: 'monospace', fontStyle: 'bold',
+    }).setOrigin(0.5).setDepth(11);
+    this.add.text(w / 2, 152, 'Proof of Concept', {
+      fontSize: '18px', color: '#9aa3b8', fontFamily: 'monospace',
+    }).setOrigin(0.5).setDepth(11);
+  }
+
+  buildButtons(w, h) {
+    this.createMenuButton(w / 2, 252, 'START GAME', () => {
       const audio = this.registry.get('audioManager');
-      if (audio) {
-        audio.resume();
-        audio.startMusic();
-      }
+      if (audio) { audio.resume(); audio.startMusic(); }
       this.scene.start('Level0Scene');
     });
-
-    this.createMenuButton(w / 2 + 130, h / 2 + 120, 'SETTINGS', () => {
-      this.scene.launch('SettingsScene', { caller: 'MenuScene' });
-    });
-
-    // Interactive Credits & Settings Buttons
-    this.createMenuButton(w / 2 - 130, h / 2 + 120, 'CREDITS', () => {
+    this.createMenuButton(w / 2 - 120, 330, 'CREDITS', () => {
       const audio = this.registry.get('audioManager');
-      if (audio) {
-        audio.resume();
-        audio.startMusic();
-      }      
+      if (audio) { audio.resume(); audio.startMusic(); }
       this.scene.start('CreditsScene');
+    });
+    this.createMenuButton(w / 2 + 120, 330, 'SETTINGS', () => {
+      this.scene.launch('SettingsScene', { caller: 'MenuScene' });
     });
   }
 
-  // Helper for menu buttons with hover effects
   createMenuButton(x, y, label, callback) {
-    const bg = this.add.graphics();
+    const bg = this.add.graphics().setDepth(12);
     const draw = (over = false) => {
       bg.clear();
-      bg.fillStyle(over ? 0x19332d : 0x19332d);
+      bg.fillStyle(over ? 0x555555 : 0x333333);
       bg.fillRoundedRect(x - 120, y - 30, 240, 60, 10);
-      bg.lineStyle(2, over ? 0x25562e : 0x25562e);
+      bg.lineStyle(2, over ? 0x44aaff : 0x666666);
       bg.strokeRoundedRect(x - 120, y - 30, 240, 60, 10);
     };
-
     draw();
-
-    const text = this.add.text(x, y, label, { 
-      fontSize: '24px', color: '#ffffff', fontFamily: 'monospace' 
-    }).setOrigin(0.5);
-
-    const zone = this.add.zone(x, y, 240, 60).setInteractive({ useHandCursor: true });
-    
+    const text = this.add.text(x, y, label, {
+      fontSize: '24px', color: '#ffffff', fontFamily: 'monospace',
+    }).setOrigin(0.5).setDepth(13);
+    const zone = this.add.zone(x, y, 240, 60).setDepth(14).setInteractive({ useHandCursor: true });
     zone.on('pointerover', () => draw(true));
     zone.on('pointerout', () => draw(false));
     zone.on('pointerdown', callback);
