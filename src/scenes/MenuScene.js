@@ -3,8 +3,15 @@ export default class MenuScene extends Phaser.Scene {
   constructor() {
     super('MenuScene');
   }
+  
+  preload() {
+    this.load.image('menuBackground', 'assets/UI/menu_background.png');
+  }
 
   create() {
+
+    // Background Image
+    this.add.image(400, 224, 'menuBackground').setScale(1.5).setAlpha(0.8).setOrigin(0.5, 0.5);
     
     const w = this.cameras.main.width;
     const h = this.cameras.main.height;
@@ -19,9 +26,18 @@ export default class MenuScene extends Phaser.Scene {
     }).setOrigin(0.5);
     
     // Subtitle
-    this.add.text(w / 2, h / 2 - 35, 'Proof of Concept', { 
+    let subtitle = this.add.text(w / 2 + 100, h / 2 - 70, 'Time traveling puzzle platformer madness!', { 
       fontSize: '18px', color: '#aaaaaa', fontFamily: 'monospace' 
-    }).setOrigin(0.5);
+    }).setOrigin(0.5).setAngle(-10);
+
+    this.tweens.add({
+      targets: subtitle,
+      scale: 1.05,
+      duration: 500,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut'
+    });
 
     // Interactive Start Button
     this.createMenuButton(w / 2, h / 2 + 35, 'START GAME', () => {

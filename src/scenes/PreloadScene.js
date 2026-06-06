@@ -14,11 +14,28 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.tilemapTiledJSON('level1', 'json/castleMap1.json');
     this.load.tilemapTiledJSON('level2', 'json/castleMap2.json');
     this.load.tilemapTiledJSON('level3', 'json/level3.json');
+    this.load.image('monkey', 'assets/UI/monkey.png');
   }
 
   // Create the loading UI and initialize game systems
   create() {
-
+    this.cameras.main.setBackgroundColor('#000000');
+    let monkey = this.add.image(400, 200, 'monkey').setScale(0.5).setAlpha(0).setOrigin(0.5, 0.5);
+    this.tweens.chain({
+      targets: monkey,
+      tweens: [
+        {
+          alpha: 1,
+          scale: 0.515,
+          duration: 1000,
+          ease: 'Sine.easeInOut'
+        }, {
+          alpha: 0,
+          duration: 1200,
+          onComplete: () => { monkey.destroy(); }
+        }
+      ]
+    });
     // init player animations
     var playerIdle = {
           key: 'idle',
@@ -68,33 +85,6 @@ export default class PreloadScene extends Phaser.Scene {
     const w = this.cameras.main.width;
     const h = this.cameras.main.height;
 
-    // Placeholder Logo and Intro
-    let stuidoText1 = this.add.text(w / 2 - 80, h / 2 - 80, 'A game by...', {
-      fontSize: '35px', color: '#ffffff', fontFamily: 'monospace'
-    });
-
-    let studioText2 = this.add.text(w / 2 - 200, h / 2 - 20, 'Placeholder Studios', {
-      fontSize: '45px', color: '#ffffff', fontFamily: 'monospace'
-    });
-
-    // Simple tween effect
-    this.tweens.chain({
-      tweens: [{
-        targets: [stuidoText1, studioText2],
-        color: '#44aaff',
-        scale: 1.05,
-        x: '-=10',
-        duration: 2000,
-        ease: 'Power2'
-      }, {
-        targets: [stuidoText1, studioText2],
-        alpha: 0,
-        duration: 2000,
-      }]
-
-      
-    });
-
     // Loading text
     let loadingText = this.add.text(w / 2, h / 2 - 20, 'Loading...', {
       fontSize: '24px', color: '#ffffff', fontFamily: 'monospace'
@@ -115,7 +105,7 @@ export default class PreloadScene extends Phaser.Scene {
     loadingContainer.add([loadingText, barBg, bar]).setAlpha(1);
 
     // Delay slightly to show the loading bar before starting generation
-    this.time.delayedCall(2000, () => {
+    this.time.delayedCall(2300, () => {
       // Simulate progress bar filling
       bar.fillRect(w / 2 - 148, h / 2 + 12, 296, 16);
 
