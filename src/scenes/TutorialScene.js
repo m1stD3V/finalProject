@@ -7,11 +7,20 @@ export default class TutorialScene extends Phaser.Scene {
   }
 
   create() {
+    console.log('TutorialScene created');
+
+    this.cfg = {
+        layerMode: 'simple',
+        layers: {
+            bg: 'bg',
+            main: 'main'
+        }
+    };
+
     const map = this.make.tilemap({ key: 'level0', tileWidth: 16, tileHeight: 16 });
     const tileset = map.addTilesetImage('castle0', 'tiles');
 
-    this.bgLayer  = map.createLayer('bg',   tileset, 0, 0);
-    this.mainLayer = map.createLayer('main', tileset, 0, 0);
+    this.setupLayers(map, tileset);
 
     this.cameras.main.zoom = 2.5;
     this.cameras.main.setBounds(0, 0, 560, 224);
@@ -29,7 +38,7 @@ export default class TutorialScene extends Phaser.Scene {
     this.objective = this.add.rectangle(250, 115, 10, 10, 0x00ff00).setDepth(100).setAlpha(0.2);
     this.physics.add.existing(this.objective, true);
     this.physics.add.overlap(this.player, this.objective, () => {
-      if (this.timePeriod === 'present') this.scene.start('Level1Scene');
+      if (this.timePeriod === 'present') this.scene.start('Level0Scene');
     });
 
     this.tweens.add({ targets: [this.objectiveGlow, this.objective], alpha: 0.9, duration: 500, yoyo: true, scale: 1.2, repeat: -1 });
@@ -55,6 +64,21 @@ export default class TutorialScene extends Phaser.Scene {
 
     this.updatePeriodVisuals(this.timePeriod);
     this.cameras.main.startFollow(this.player);
+  }
+
+  setupLayers(map, tileset) {
+    const { layers, layerMode } = this.cfg;
+    if (layerMode === 'simple') {
+      this.bgLayer = map.createLayer(layers.bg, tileset, 0, 0);
+      this.mainLayer = map.createLayer(layers.main, tileset, 0, 0);
+    } else {
+      this.pastBg = map.createLayer(layers.pastBg, tileset, 0, 0);
+      this.pastNoCollide = map.createLayer(layers.pastNoCollide, tileset, 0, 0);
+      this.pastMain = map.createLayer(layers.pastMain, tileset, 0, 0);
+      this.presentBg = map.createLayer(layers.presentBg, tileset, 0, 0);
+      this.presentNoCollide = map.createLayer(layers.presentNoCollide, tileset, 0, 0);
+      this.presentMain = map.createLayer(layers.presentMain, tileset, 0, 0);
+    }
   }
 
   createPlayer() {
