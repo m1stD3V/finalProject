@@ -1,4 +1,4 @@
-// Time Thief menu — added idle player sprite
+// Time Thief menu — added clock face and gate time-rift
 export default class MenuScene extends Phaser.Scene {
   constructor() {
     super('MenuScene');
@@ -12,7 +12,9 @@ export default class MenuScene extends Phaser.Scene {
     this.buildSky(w, h);
     this.buildStars(w, h);
     this.buildMoon(620, 70);
+    this.buildClock(w / 2, 138, 86);
     this.buildCastle(w, groundY);
+    this.buildGateRift(w / 2, groundY - 36);
     this.buildGround(w, h, groundY);
 
     this.buildTorch(96, groundY - 70);
@@ -52,6 +54,34 @@ export default class MenuScene extends Phaser.Scene {
     this.add.circle(x + 9, y - 6, 19, 0x141a32, 0.55).setDepth(2);
   }
 
+  buildClock(cx, cy, r) {
+    const gold = 0xf5c518, depth = 2, alpha = 0.18;
+
+    const g = this.add.graphics().setDepth(depth).setAlpha(alpha);
+    g.lineStyle(2, gold, 1);
+    g.strokeCircle(cx, cy, r);
+    g.strokeCircle(cx, cy, r * 0.8);
+
+    const numerals = ['XII', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI'];
+    numerals.forEach((n, i) => {
+      const a = Phaser.Math.DegToRad(i * 30);
+      const nx = cx + Math.sin(a) * (r * 0.88);
+      const ny = cy - Math.cos(a) * (r * 0.88);
+      this.add.text(nx, ny, n, {
+        fontSize: '12px', color: '#f5c518', fontFamily: 'monospace', fontStyle: 'bold',
+      }).setOrigin(0.5).setDepth(depth).setAlpha(alpha);
+    });
+
+    const minute = this.add.rectangle(cx, cy, 2.5, r * 0.66, gold)
+      .setOrigin(0.5, 1).setDepth(depth).setAlpha(alpha);
+    const hour = this.add.rectangle(cx, cy, 3, r * 0.48, gold)
+      .setOrigin(0.5, 1).setDepth(depth).setAlpha(alpha * 0.8);
+    this.add.circle(cx, cy, 4, gold).setDepth(depth).setAlpha(alpha);
+
+    this.tweens.add({ targets: minute, angle: 360, duration: 9000, repeat: -1 });
+    this.tweens.add({ targets: hour, angle: 360, duration: 54000, repeat: -1 });
+  }
+
   buildCastle(w, groundY) {
     const g = this.add.graphics().setDepth(3);
     const win = 0xffb347;
@@ -70,6 +100,18 @@ export default class MenuScene extends Phaser.Scene {
     g.fillStyle(win, 0.85);
     g.fillRect(keepX + 40, groundY - 96, 8, 14);
     g.fillRect(keepX + keepW - 48, groundY - 96, 8, 14);
+  }
+
+  buildGateRift(cx, cy) {
+    const layers = [
+      this.add.ellipse(cx, cy, 60, 90, 0x5a96e6, 0.18).setDepth(4),
+      this.add.ellipse(cx, cy, 40, 64, 0x966beb, 0.30).setDepth(4),
+      this.add.ellipse(cx, cy, 22, 40, 0xc8b6ff, 0.45).setDepth(4),
+    ];
+    this.tweens.add({
+      targets: layers, scaleX: 1.18, alpha: '+=0.12',
+      duration: 1800, yoyo: true, repeat: -1, ease: 'Sine.inOut',
+    });
   }
 
   tower(g, x, groundY, towerW, towerH, color, win) {
