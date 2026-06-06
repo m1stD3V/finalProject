@@ -296,10 +296,13 @@ export default class GameScene extends Phaser.Scene {
     if (this.caught || this.won) return;
     this.handleInput();
     this.manageGuards();
-    // Debug
-    let mouse = this.input.activePointer;
-    if (mouse.isDown == true) {
-      console.log(`Player: (${Math.trunc(this.player.x)}, ${Math.trunc(this.player.y)})\nObjective: (${Math.trunc(this.objective.x)}, ${Math.trunc(this.objective.y)})\nMouse: (${Math.trunc(mouse.worldX)}, ${Math.trunc(mouse.worldY)})`);
+  
+    if ((this.player.x < 0 || this.player.x > this.cfg.cameraWidth) || (this.player.y < 0 || this.player.y > this.cfg.cameraHeight)) {
+      this.playerHit(this.player.x);
+      if (this.lives > 0) {
+        this.player.x = this.cfg.playerStart.x;
+        this.player.y = this.cfg.playerStart.y;
+      }
     }
   }
 
