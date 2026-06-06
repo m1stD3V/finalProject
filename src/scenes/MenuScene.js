@@ -69,9 +69,9 @@ export default class MenuScene extends Phaser.Scene {
     const bg = this.add.graphics();
     const draw = (over = false) => {
       bg.clear();
-      bg.fillStyle(over ? 0x555555 : 0x333333);
+      bg.fillStyle(over ? 0x19332d : 0x19332d);
       bg.fillRoundedRect(x - 120, y - 30, 240, 60, 10);
-      bg.lineStyle(2, over ? 0x44aaff : 0x666666);
+      bg.lineStyle(2, over ? 0x25562e : 0x25562e);
       bg.strokeRoundedRect(x - 120, y - 30, 240, 60, 10);
     };
 
