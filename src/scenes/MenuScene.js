@@ -1,4 +1,4 @@
-// Time Thief menu — castle background pass
+// Time Thief menu — added moon and stars
 export default class MenuScene extends Phaser.Scene {
   constructor() {
     super('MenuScene');
@@ -10,6 +10,8 @@ export default class MenuScene extends Phaser.Scene {
     const groundY = h - 92;
 
     this.buildSky(w, h);
+    this.buildStars(w, h);
+    this.buildMoon(620, 70);
     this.buildCastle(w, groundY);
     this.buildGround(w, h, groundY);
     this.buildTitle(w, h);
@@ -20,6 +22,29 @@ export default class MenuScene extends Phaser.Scene {
     const g = this.add.graphics().setDepth(0);
     g.fillGradientStyle(0x222a4a, 0x222a4a, 0x070912, 0x070912, 1);
     g.fillRect(0, 0, w, h);
+  }
+
+  buildStars(w, h) {
+    const g = this.add.graphics().setDepth(1);
+    g.fillStyle(0xcdd6f0, 1);
+    const stars = [
+      [60, 40], [140, 90], [210, 50], [300, 110], [360, 60], [430, 95],
+      [500, 45], [560, 130], [690, 55], [740, 110], [90, 150], [780, 60],
+    ];
+    for (const [x, y] of stars) g.fillCircle(x, y, Phaser.Math.Between(1, 2));
+    for (const [x, y] of [[140, 90], [430, 95], [690, 55]]) {
+      const s = this.add.circle(x, y, 1.6, 0xffffff).setDepth(1);
+      this.tweens.add({
+        targets: s, alpha: 0.2, duration: Phaser.Math.Between(900, 1600),
+        yoyo: true, repeat: -1, delay: Phaser.Math.Between(0, 800),
+      });
+    }
+  }
+
+  buildMoon(x, y) {
+    this.add.circle(x, y, 34, 0xece7d2, 0.16).setDepth(1);
+    this.add.circle(x, y, 24, 0xece7d2).setDepth(2);
+    this.add.circle(x + 9, y - 6, 19, 0x141a32, 0.55).setDepth(2);
   }
 
   buildCastle(w, groundY) {
