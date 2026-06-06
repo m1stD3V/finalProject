@@ -1,4 +1,4 @@
-// Time Thief menu — added moon and stars
+// Time Thief menu — added idle player sprite
 export default class MenuScene extends Phaser.Scene {
   constructor() {
     super('MenuScene');
@@ -14,6 +14,11 @@ export default class MenuScene extends Phaser.Scene {
     this.buildMoon(620, 70);
     this.buildCastle(w, groundY);
     this.buildGround(w, h, groundY);
+
+    this.buildTorch(96, groundY - 70);
+    this.buildTorch(w - 96, groundY - 70);
+
+    this.buildThief(190, groundY);
     this.buildTitle(w, h);
     this.buildButtons(w, h);
   }
@@ -91,6 +96,34 @@ export default class MenuScene extends Phaser.Scene {
     g.lineBetween(0, groundY + 6, w, groundY + 6);
   }
 
+  buildTorch(x, y) {
+    this.add.rectangle(x, y + 14, 6, 26, 0x3a2a12).setDepth(7);
+    const glow = this.add.circle(x, y, 28, 0xff8c1e, 0.22).setDepth(6);
+    const flame = this.add.ellipse(x, y - 4, 11, 17, 0xffb347).setDepth(8);
+    const core = this.add.ellipse(x, y - 2, 5, 9, 0xfff1c0).setDepth(8);
+
+    this.tweens.add({
+      targets: [flame, core], scaleY: 1.3, scaleX: 0.85,
+      duration: 220, yoyo: true, repeat: -1, ease: 'Sine.inOut',
+      delay: Phaser.Math.Between(0, 200),
+    });
+    this.tweens.add({
+      targets: glow, alpha: 0.34, scale: 1.14,
+      duration: 360, yoyo: true, repeat: -1, ease: 'Sine.inOut',
+    });
+  }
+
+  buildThief(x, groundY) {
+    const thief = this.add.sprite(x, groundY - 2, 'player')
+      .setOrigin(0.5, 1).setScale(3.5).setDepth(9).setFlipX(true);
+    if (this.anims.exists('idle')) thief.play('idle');
+
+    this.tweens.add({
+      targets: thief, y: groundY - 5,
+      duration: 1400, yoyo: true, repeat: -1, ease: 'Sine.inOut',
+    });
+  }
+
   buildTitle(w, h) {
     this.add.text(w / 2 + 5, 102, 'TIME THIEF', {
       fontSize: '64px', color: '#000000', fontFamily: 'monospace', fontStyle: 'bold',
@@ -104,37 +137,50 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   buildButtons(w, h) {
-    this.createMenuButton(w / 2, 252, 'START GAME', () => {
+    this.createMenuButton(w / 2, 252, 'START GAME', true, () => {
       const audio = this.registry.get('audioManager');
       if (audio) { audio.resume(); audio.startMusic(); }
       this.scene.start('Level0Scene');
     });
-    this.createMenuButton(w / 2 - 120, 330, 'CREDITS', () => {
+    this.createMenuButton(w / 2 - 120, 330, 'CREDITS', false, () => {
       const audio = this.registry.get('audioManager');
       if (audio) { audio.resume(); audio.startMusic(); }
       this.scene.start('CreditsScene');
     });
-    this.createMenuButton(w / 2 + 120, 330, 'SETTINGS', () => {
+    this.createMenuButton(w / 2 + 120, 330, 'SETTINGS', false, () => {
       this.scene.launch('SettingsScene', { caller: 'MenuScene' });
     });
   }
 
-  createMenuButton(x, y, label, callback) {
+  createMenuButton(x, y, label, primary, callback) {
+    const bw = primary ? 260 : 200;
+    const bh = primary ? 56 : 48;
+
     const bg = this.add.graphics().setDepth(12);
     const draw = (over = false) => {
       bg.clear();
-      bg.fillStyle(over ? 0x555555 : 0x333333);
-      bg.fillRoundedRect(x - 120, y - 30, 240, 60, 10);
-      bg.lineStyle(2, over ? 0x44aaff : 0x666666);
-      bg.strokeRoundedRect(x - 120, y - 30, 240, 60, 10);
+      bg.fillStyle(over ? (primary ? 0x30374a : 0x262c3e) : (primary ? 0x262b3a : 0x1c2030), 1);
+      bg.fillRoundedRect(x - bw / 2, y - bh / 2, bw, bh, 8);
+      bg.lineStyle(2, over ? 0xf5c518 : (primary ? 0xc9a23a : 0x4a5168), 1);
+      bg.strokeRoundedRect(x - bw / 2, y - bh / 2, bw, bh, 8);
     };
     draw();
+
     const text = this.add.text(x, y, label, {
-      fontSize: '24px', color: '#ffffff', fontFamily: 'monospace',
+      fontSize: primary ? '26px' : '20px',
+      color: primary ? '#ffffff' : '#d7dbe6',
+      fontFamily: 'monospace',
     }).setOrigin(0.5).setDepth(13);
-    const zone = this.add.zone(x, y, 240, 60).setDepth(14).setInteractive({ useHandCursor: true });
-    zone.on('pointerover', () => draw(true));
-    zone.on('pointerout', () => draw(false));
+
+    const zone = this.add.zone(x, y, bw, bh).setDepth(14).setInteractive({ useHandCursor: true });
+    zone.on('pointerover', () => {
+      draw(true); text.setColor('#ffffff');
+      this.tweens.add({ targets: [bg, text], scale: 1.04, duration: 90 });
+    });
+    zone.on('pointerout', () => {
+      draw(false); text.setColor(primary ? '#ffffff' : '#d7dbe6');
+      this.tweens.add({ targets: [bg, text], scale: 1, duration: 90 });
+    });
     zone.on('pointerdown', callback);
   }
 }
