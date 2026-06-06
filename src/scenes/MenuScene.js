@@ -1,4 +1,4 @@
-// Time Thief menu — added clock face and gate time-rift
+// Time Thief menu — embers, fog, parallax, and vignette polish
 export default class MenuScene extends Phaser.Scene {
   constructor() {
     super('MenuScene');
@@ -16,12 +16,14 @@ export default class MenuScene extends Phaser.Scene {
     this.buildCastle(w, groundY);
     this.buildGateRift(w / 2, groundY - 36);
     this.buildGround(w, h, groundY);
+    this.buildFog(w, groundY);
 
     this.buildTorch(96, groundY - 70);
     this.buildTorch(w - 96, groundY - 70);
 
     this.buildThief(190, groundY);
     this.buildTitle(w, h);
+    this.buildVignette(w, h);
     this.buildButtons(w, h);
   }
 
@@ -29,6 +31,12 @@ export default class MenuScene extends Phaser.Scene {
     const g = this.add.graphics().setDepth(0);
     g.fillGradientStyle(0x222a4a, 0x222a4a, 0x070912, 0x070912, 1);
     g.fillRect(0, 0, w, h);
+
+    const rift = this.add.ellipse(w / 2, h * 0.30, w * 0.34, h * 0.9, 0x6a55dc, 0.10).setDepth(1);
+    this.tweens.add({
+      targets: rift, alpha: 0.2, scaleX: 1.1,
+      duration: 3000, yoyo: true, repeat: -1, ease: 'Sine.inOut',
+    });
   }
 
   buildStars(w, h) {
@@ -85,6 +93,11 @@ export default class MenuScene extends Phaser.Scene {
   buildCastle(w, groundY) {
     const g = this.add.graphics().setDepth(3);
     const win = 0xffb347;
+
+    g.fillStyle(0x0a0e1e, 1);
+    g.fillRect(w * 0.06, groundY - 170, w * 0.18, 170);
+    g.fillRect(w * 0.76, groundY - 188, w * 0.18, 188);
+
     this.tower(g, -10, groundY, 150, 230, 0x05070f, win);
     this.tower(g, w - 140, groundY, 150, 252, 0x04050c, win);
 
@@ -138,6 +151,18 @@ export default class MenuScene extends Phaser.Scene {
     g.lineBetween(0, groundY + 6, w, groundY + 6);
   }
 
+  buildFog(w, groundY) {
+    const mkFog = (y, alpha, color) => {
+      const f = this.add.ellipse(w / 2, y, w * 1.3, 70, color, alpha).setDepth(6);
+      this.tweens.add({
+        targets: f, x: w / 2 + 40,
+        duration: 9000, yoyo: true, repeat: -1, ease: 'Sine.inOut',
+      });
+    };
+    mkFog(groundY + 6, 0.10, 0x8090b4);
+    mkFog(groundY + 40, 0.07, 0x8090b4);
+  }
+
   buildTorch(x, y) {
     this.add.rectangle(x, y + 14, 6, 26, 0x3a2a12).setDepth(7);
     const glow = this.add.circle(x, y, 28, 0xff8c1e, 0.22).setDepth(6);
@@ -153,9 +178,25 @@ export default class MenuScene extends Phaser.Scene {
       targets: glow, alpha: 0.34, scale: 1.14,
       duration: 360, yoyo: true, repeat: -1, ease: 'Sine.inOut',
     });
+
+    for (let i = 0; i < 3; i++) {
+      const ember = this.add.circle(x + Phaser.Math.Between(-3, 3), y, 1.5, 0xffb347).setDepth(8);
+      this.tweens.add({
+        targets: ember,
+        y: y - Phaser.Math.Between(40, 60),
+        x: x + Phaser.Math.Between(-8, 8),
+        alpha: 0,
+        duration: Phaser.Math.Between(1600, 2600),
+        repeat: -1,
+        delay: i * 700,
+        onRepeat: () => { ember.y = y; ember.alpha = 0.9; },
+      });
+    }
   }
 
   buildThief(x, groundY) {
+    this.add.ellipse(x, groundY - 2, 70, 14, 0x000000, 0.35).setDepth(8);
+
     const thief = this.add.sprite(x, groundY - 2, 'player')
       .setOrigin(0.5, 1).setScale(3.5).setDepth(9).setFlipX(true);
     if (this.anims.exists('idle')) thief.play('idle');
@@ -167,15 +208,43 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   buildTitle(w, h) {
-    this.add.text(w / 2 + 5, 102, 'TIME THIEF', {
-      fontSize: '64px', color: '#000000', fontFamily: 'monospace', fontStyle: 'bold',
-    }).setOrigin(0.5).setDepth(10).setAlpha(0.5);
-    this.add.text(w / 2, 96, 'TIME THIEF', {
-      fontSize: '64px', color: '#f5c518', fontFamily: 'monospace', fontStyle: 'bold',
+    const style = { fontSize: '64px', fontFamily: 'monospace', fontStyle: 'bold' };
+
+    this.add.text(w / 2 + 5, 96 + 6, 'TIME THIEF', { ...style, color: '#000000' })
+      .setOrigin(0.5).setDepth(10).setAlpha(0.6);
+
+    const title = this.add.text(w / 2, 96, 'TIME THIEF', { ...style, color: '#f5c518' })
+      .setOrigin(0.5).setDepth(11);
+    title.setShadow(0, 0, '#f5c518', 18, false, true);
+
+    const glint = this.add.text(w / 2, 96, 'TIME THIEF', { ...style, color: '#fff6c8' })
+      .setOrigin(0.5).setDepth(11).setAlpha(0);
+    this.tweens.add({
+      targets: glint, alpha: 0.55,
+      duration: 280, yoyo: true, hold: 60, repeat: -1, repeatDelay: 3200, ease: 'Sine.inOut',
+    });
+
+    this.add.text(w / 2, 152, '- SLIP BETWEEN PAST AND PRESENT -', {
+      fontSize: '15px', color: '#9aa3b8', fontFamily: 'monospace',
     }).setOrigin(0.5).setDepth(11);
-    this.add.text(w / 2, 152, 'Proof of Concept', {
-      fontSize: '18px', color: '#9aa3b8', fontFamily: 'monospace',
-    }).setOrigin(0.5).setDepth(11);
+
+    this.tweens.add({
+      targets: [title, glint], y: 92,
+      duration: 2200, yoyo: true, repeat: -1, ease: 'Sine.inOut',
+    });
+  }
+
+  buildVignette(w, h) {
+    const g = this.add.graphics().setDepth(10);
+    const steps = 16, depth = 90, th = depth / steps + 1;
+    for (let i = 0; i < steps; i++) {
+      const inset = depth * (i / steps);
+      g.fillStyle(0x05060d, 0.05);
+      g.fillRect(inset, inset, w - 2 * inset, th);
+      g.fillRect(inset, h - inset - th, w - 2 * inset, th);
+      g.fillRect(inset, inset, th, h - 2 * inset);
+      g.fillRect(w - inset - th, inset, th, h - 2 * inset);
+    }
   }
 
   buildButtons(w, h) {
