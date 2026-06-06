@@ -270,12 +270,13 @@ export default class MenuScene extends Phaser.Scene {
     const bg = this.add.graphics().setDepth(12);
     const draw = (over = false) => {
       bg.clear();
+      const gw = over ? bw + 6 : bw;
+      const gh = over ? bh + 4 : bh;
       bg.fillStyle(over ? (primary ? 0x30374a : 0x262c3e) : (primary ? 0x262b3a : 0x1c2030), 1);
-      bg.fillRoundedRect(x - bw / 2, y - bh / 2, bw, bh, 8);
+      bg.fillRoundedRect(x - gw / 2, y - gh / 2, gw, gh, 8);
       bg.lineStyle(2, over ? 0xf5c518 : (primary ? 0xc9a23a : 0x4a5168), 1);
-      bg.strokeRoundedRect(x - bw / 2, y - bh / 2, bw, bh, 8);
-    };
-    draw();
+      bg.strokeRoundedRect(x - gw / 2, y - gh / 2, gw, gh, 8);
+    };    draw();
 
     const text = this.add.text(x, y, label, {
       fontSize: primary ? '26px' : '20px',
@@ -286,11 +287,11 @@ export default class MenuScene extends Phaser.Scene {
     const zone = this.add.zone(x, y, bw, bh).setDepth(14).setInteractive({ useHandCursor: true });
     zone.on('pointerover', () => {
       draw(true); text.setColor('#ffffff');
-      this.tweens.add({ targets: [bg, text], scale: 1.04, duration: 90 });
+      this.tweens.add({ targets: text, scale: 1.05, duration: 90 });
     });
     zone.on('pointerout', () => {
       draw(false); text.setColor(primary ? '#ffffff' : '#d7dbe6');
-      this.tweens.add({ targets: [bg, text], scale: 1, duration: 90 });
+      this.tweens.add({ targets: text, scale: 1, duration: 90 });
     });
     zone.on('pointerdown', callback);
   }
