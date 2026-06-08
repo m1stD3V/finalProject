@@ -7,5 +7,5 @@
     "noEmit": true,
     "lib": ["ES2022", "DOM"]
   },
-  "include": ["src/objects/*.js","src/scenes/*.js","src/systems/*.js","src/*.js", "lib/phaser.d.ts"]
+  "include": ["src/objects/*.js","src/scenes/*.js","src/systems/*.js","src/*.js"]
 }

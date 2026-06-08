@@ -1,3 +1,6 @@
+const STORAGE_VOLUME = 'timeThief_volume';
+const STORAGE_MUSIC  = 'timeThief_musicEnabled';
+
 export default class AudioManager {
   constructor(scene) {
     this.scene = scene;
@@ -6,11 +9,7 @@ export default class AudioManager {
     this.musicPlaying = false;
     this.bgMusic = null;
     this.masterVolume = 1;
-  }
-
-  setVolume(vol) {
-    this.masterVolume = Math.min(Math.max(vol, 0), 1);
-    if (this.bgMusic) this.bgMusic.setVolume(this.masterVolume * 0.5);
+    this.musicEnabled = true;
   }
 
   init() {
@@ -19,10 +18,34 @@ export default class AudioManager {
     } catch {
       this.enabled = false;
     }
+
+    // Restore saved preferences
+    const savedVol = localStorage.getItem(STORAGE_VOLUME);
+    if (savedVol !== null) this.masterVolume = Math.min(Math.max(parseFloat(savedVol), 0), 1);
+
+    const savedMusic = localStorage.getItem(STORAGE_MUSIC);
+    if (savedMusic !== null) this.musicEnabled = savedMusic === 'true';
   }
 
   resume() {
     if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+  }
+
+  setVolume(vol) {
+    this.masterVolume = Math.min(Math.max(vol, 0), 1);
+    if (this.bgMusic) this.bgMusic.setVolume(this.masterVolume * 0.5);
+    localStorage.setItem(STORAGE_VOLUME, this.masterVolume);
+  }
+
+  setMusicEnabled(enabled) {
+    this.musicEnabled = enabled;
+    localStorage.setItem(STORAGE_MUSIC, enabled);
+    if (enabled) {
+      this.musicPlaying = false; // allow startMusic to re-enter
+      this.startMusic();
+    } else {
+      this.stopMusic();
+    }
   }
 
   playTone(freq, duration, type = 'sine', volume = 0.1) {
@@ -112,10 +135,9 @@ export default class AudioManager {
   }
 
   startMusic() {
-    if (!this.enabled || this.musicPlaying) return;
+    if (!this.enabled || this.musicPlaying || !this.musicEnabled) return;
     this.musicPlaying = true;
 
-    // Use the loaded asset if available, otherwise fall back to the synth loop
     if (this.scene.cache.audio.exists('levelTheme')) {
       if (!this.bgMusic) {
         this.bgMusic = this.scene.sound.add('levelTheme', { loop: true, volume: this.masterVolume * 0.5 });

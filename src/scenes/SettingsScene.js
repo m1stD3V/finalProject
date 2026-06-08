@@ -47,15 +47,23 @@ export default class SettingsScene extends Phaser.Scene {
 
     this.createVolumeSlider(W / 2, py + 120);
 
+    const audio = this.registry.get('audioManager');
+    const musicBtn = this.createButton(W / 2, py + 168,
+      `MUSIC: ${audio && audio.musicEnabled ? 'ON' : 'OFF'}`, false, () => {
+        if (!audio) return;
+        audio.setMusicEnabled(!audio.musicEnabled);
+        musicBtn.setText(`MUSIC: ${audio.musicEnabled ? 'ON' : 'OFF'}`);
+      });
+
     // Reset always nukes all game scenes and returns to menu
-    this.createButton(W / 2, py + 200, 'RESET GAME', true, () => {
+    this.createButton(W / 2, py + 218, 'RESET GAME', true, () => {
       [...SettingsScene.GAMEPLAY_SCENES, 'SettingsScene', 'UIScene', 'TransitionScene'].forEach(key => {
         if (this.scene.isActive(key) || this.scene.isPaused(key)) this.scene.stop(key);
       });
       this.scene.start('MenuScene');
     });
 
-    this.createButton(W / 2, py + 255, `FULLSCREEN: ${(this.scale.isFullscreen) ? "ON" : "OFF"}`, false, () => {
+    this.createButton(W / 2, py + 270, `FULLSCREEN: ${(this.scale.isFullscreen) ? "ON" : "OFF"}`, false, () => {
       if (this.scale.isFullscreen) {
         this.scale.stopFullscreen();
       } else {
@@ -63,7 +71,7 @@ export default class SettingsScene extends Phaser.Scene {
       }
     });
 
-    this.createButton(W / 2, py + 310, 'BACK', false, () => this.close());
+    this.createButton(W / 2, py + 322, 'BACK', false, () => this.close());
 
     this.input.keyboard.once('keydown-ESC', () => this.close());
 

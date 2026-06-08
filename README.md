@@ -15,26 +15,46 @@
 
 ---
 
-## Demo
+## Play the Game
 
-<!-- Replace the block below with your video once recorded -->
-> 📹 **Video demo coming soon** — drop a link or embed here when ready.
->
-> ```
-> [![Time Thief Demo](thumbnail.png)](https://your-video-link-here)
-> ```
+> **[▶ Play Time Thief](https://m1std3v.github.io/finalProject/)**
+
+### Prototypes
+| Prototype | Link | What it shows |
+|-----------|------|---------------|
+| Core Gameplay | [Play](https://m1std3v.github.io/finalProject/prototypes/core-gameplay/) | First playable PoC — procedural tiles, time-travel switching, mobile controls, synthesized audio |
+| Scene Flow | [Play](https://m1std3v.github.io/finalProject/prototypes/scene-flow/) | Complete scene graph — every screen with navigation buttons showing all transitions |
+| Cinematics | [Play](https://m1std3v.github.io/finalProject/prototypes/cinematics/) | Animated sequences — studio intro, procedural animated castle title screen, credits |
+
+---
+
+## Theme — "Nearby in Space, but Distant in Time"
+
+*Time Thief* places the player inside a single castle that exists simultaneously in two eras — the same stone halls, towers, and courtyards appear in both the past and present, but are populated by different guards and blocked by different obstacles depending on which time period is active. Toggling between periods is the core mechanic: the player slips between eras to move through walls that only existed centuries ago or to avoid guards that only patrol in the present day, always occupying the same physical location in space but jumping across a vast gulf of time.
+
+---
+
+## Selectable Requirements
+
+The team is targeting the following three selectable requirements:
+
+1. **Data-driven experience progression** — Level layouts, guard patrol routes, objective positions, and per-period tile layers are all defined in `src/levelData.js` (a structured JS data file) and in the Tiled-exported JSON tilemaps under `json/`. Changing a level's design requires only editing these data files, not game logic.
+
+2. **Procedural audio** — Every in-game sound effect (jump, hit, caught, win, time-switch) is synthesized at runtime using the Web Audio API's oscillator nodes with frequency envelopes — no SFX audio files are downloaded. See `src/systems/AudioManager.js`.
+
+3. **Procedural graphics** — The main menu, credits screen, HUD, and transition overlay are all drawn entirely with `Phaser.GameObjects.Graphics` (filled rectangles, rounded rects, circles, gradient fills, and animated tweens). No image files are used for UI or background scenery.
 
 ---
 
 ## Team
 
-| Name | 
-|------|
-| Ernie Jennison |
-| Waheed Khan |
-| Evangel Hightower-Rojas |
-| Serena Heath |
-| Joshua Peterson |
+| Name | Role |
+|------|------|
+| Ernie Jennison | Architecture Lead — scene systems, GameScene engine, physics tuning |
+| Waheed Khan | UI & Visual Polish — menu scenery, settings panel, CSS/layout |
+| Evangel Hightower-Rojas | Tutorial & Credits — TutorialScene, CreditsScene, volume slider |
+| Serena Heath | Level Design & Art — tilemap authoring (Tiled), UI button sprites |
+| Joshua Peterson | Audio & Art Lead — music composition, player/enemy sprites, tilemaps |
 
 ---
 
@@ -93,7 +113,7 @@ finalProject/
 │   ├── objects/                  # Game object class hierarchy
 │   │   ├── GameObject.js         # Base class — period-awareness, shared movement
 │   │   ├── Player.js             # Player velocity, jump, and animation logic
-│   │   └── Guards.js             # Guard_Generic, Guard_Past, Guard_Present
+│   │   └── Guards.js             # Guard_Generic, Guard_Past, Guard_Present (vision ellipse, patrol, chase)
 │   │
 │   ├── scenes/                   # All Phaser scenes
 │   │   ├── BootScene.js          # Bootstraps into PreloadScene
@@ -114,7 +134,7 @@ finalProject/
 │       └── AudioManager.js       # Web Audio API singleton — music + synthesized SFX
 │
 ├── assets/
-│   ├── audio/                    # .wav music tracks (mainTheme, levelTheme)
+│   ├── audio/                    # .mp3 music tracks (mainTheme, levelTheme)
 │   ├── player/                   # Player sprite sheet and individual frames
 │   ├── enemies/                  # Enemy sprites (clanker.png)
 │   ├── environment/              # Tileset PNGs (castle, floor, tower, platform)
@@ -125,11 +145,8 @@ finalProject/
 │   ├── musicLoader.json          # Audio asset paths
 │   ├── castleMap0.json           # Tiled tilemap (25×14 grid, bg + main layers)
 │   └── *.json                    # Additional tileset and level metadata
-│
-└── lib/
-    ├── phaser.js                 # Phaser 3 (local copy, no bundler required)
-    └── phaser.d.ts               # TypeScript definitions for editor IntelliSense
 ```
+Phaser 3 is loaded from CDN (`cdn.jsdelivr.net`) — no local copy required.
 
 ---
 
@@ -369,7 +386,7 @@ classDiagram
 
 | Requirement | Implementation | Location |
 |-------------|----------------|----------|
-| Continuously looping background sound | `mainTheme.wav` loaded via Phaser's sound manager, looped at volume 0.5, started on "START GAME" | `PreloadScene.js` · `AudioManager.js → startMusic()` |
+| Continuously looping background sound | `mainTheme.mp3` loaded via Phaser's sound manager, looped at volume 0.5, started on "START GAME" | `PreloadScene.js` · `AudioManager.js → startMusic()` |
 | Dynamically-generated sounds | Synthesized via Web Audio API: triangle-wave jump SFX (400 → 600 Hz), sawtooth time-switch SFX (200 → 1200 Hz), and a programmatic 4-bar sine-wave music fallback | `AudioManager.js → playJump()`, `playTimeSwitch()`, `playMusicLoop()` |
 
 ### Visual

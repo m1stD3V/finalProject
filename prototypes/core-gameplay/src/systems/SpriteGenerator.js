@@ -1,0 +1,86 @@
+export default class SpriteGenerator {
+  constructor(scene) {
+    this.scene = scene;
+  }
+
+  generateAll() {
+    this.generateTilesets();
+    this.generatePlayer();
+  }
+
+  generateTilesets() {
+    this.generateTileset('tileset_past', [
+      { color: '#4A4A4A', pattern: 'stone' },
+      { color: '#5D4037', pattern: 'plank' }
+    ]);
+    this.generateTileset('tileset_present', [
+      { color: '#E0E0E0', pattern: 'panel' },
+      { color: '#2C3E50', pattern: 'tile' }
+    ]);
+  }
+
+  generateTileset(key, tiles) {
+    const size = 32;
+    const canvas = this.scene.textures.createCanvas(key, size * tiles.length, size);
+    const ctx = canvas.context;
+
+    tiles.forEach((tile, i) => {
+      const offsetX = i * size;
+      ctx.fillStyle = tile.color;
+      ctx.fillRect(offsetX, 0, size, size);
+      ctx.lineWidth = 1;
+
+      if (tile.pattern === 'stone') {
+        ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+        ctx.strokeRect(offsetX + 2, 2, 28, 12);
+        ctx.strokeRect(offsetX + 2, 16, 12, 14);
+        ctx.strokeRect(offsetX + 16, 16, 14, 14);
+      } else if (tile.pattern === 'plank') {
+        ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+        ctx.beginPath();
+        ctx.moveTo(offsetX, 8); ctx.lineTo(offsetX + size, 8);
+        ctx.moveTo(offsetX, 16); ctx.lineTo(offsetX + size, 16);
+        ctx.moveTo(offsetX, 24); ctx.lineTo(offsetX + size, 24);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(0,0,0,0.1)';
+        ctx.fillRect(offsetX + 4, 4, 2, 2);
+        ctx.fillRect(offsetX + 20, 12, 2, 2);
+        ctx.fillRect(offsetX + 10, 20, 2, 2);
+      } else if (tile.pattern === 'panel') {
+        ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+        ctx.strokeRect(offsetX + 1, 1, size - 2, size - 2);
+        ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+        ctx.strokeRect(offsetX, 0, size, size);
+      } else if (tile.pattern === 'tile') {
+        ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+        ctx.strokeRect(offsetX + 4, 4, 24, 24);
+        ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+        ctx.strokeRect(offsetX, 0, size, size);
+      }
+
+      ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+      ctx.strokeRect(offsetX + 0.5, 0.5, size - 1, size - 1);
+    });
+
+    canvas.refresh();
+  }
+
+  generatePlayer() {
+    const g = this.scene.add.graphics();
+    g.fillStyle(0x000000, 0.3);
+    g.fillRect(2, 2, 32, 32);
+    g.fillStyle(0x4488ff);
+    g.fillRect(0, 0, 32, 32);
+    g.fillStyle(0x66aaff);
+    g.fillRect(0, 0, 32, 4);
+    g.fillRect(0, 0, 4, 32);
+    g.fillStyle(0xffffff);
+    g.fillRect(4, 8, 8, 12);
+    g.fillRect(20, 8, 8, 12);
+    g.fillStyle(0x000000);
+    g.fillRect(8, 12, 4, 4);
+    g.fillRect(24, 12, 4, 4);
+    g.generateTexture('player', 34, 34);
+    g.destroy();
+  }
+}

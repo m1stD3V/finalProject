@@ -2,8 +2,6 @@
 
 All assets used in this project, with creation credits and sourcing information.
 
-> **How to fill this in:** Replace every `[Team Member]` with the name(s) of whoever made or sourced the asset, and every `[Tool]` with the software used (e.g. Aseprite, Piskel, Audacity, Suno, Photoshop).
-
 ---
 
 ## Audio
@@ -51,7 +49,6 @@ All environment tiles and tilesets were created by Joshua Peterson using Aseprit
 |------|-------------|
 | `assets/environment/levelTileset.png` | Primary level tileset (reference image) |
 | `assets/environment/levelTileset0.png` | Active level tileset used in-game (16 × 16 px tiles) |
-| `assets/environment/worldTileset.png` | World-view tileset |
 | `assets/environment/castleGates.png` | Castle gates decorative element |
 | `assets/environment/castleOutFloorCenter.png` | Castle exterior floor — center segment |
 | `assets/environment/castleOutFloorL.png` | Castle exterior floor — left end cap |

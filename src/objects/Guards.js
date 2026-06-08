@@ -12,7 +12,7 @@ export default class Guard_Generic extends GameObject {
     // Negative value: how many px above this guard it can jump to reach a target
     this.verticalReach = this.height * (Math.abs(this.jumpForce) / 100) - this.height;
     this.chaseRange = new Phaser.Geom.Ellipse(x, y, visionSize, visionSize);
-    this.debugRing = scene.add.circle(x, y, visionSize / 2, 0xfeed4f, 0.25);
+    this.debugRing = scene.add.circle(x, y, visionSize / 2, 0xfeed4f, 0.25).setVisible(false);
     this.patroling = true;
     this.cooldownTimer = null;
     this.setPatrolRoute(patrolRoute);

@@ -32,7 +32,7 @@ const config = {
     }
   },
   input: {
-    activePointers: 2
+    activePointers: 4
   },
   pixelArt: true,
   roundPixels: true,

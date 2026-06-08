@@ -201,7 +201,7 @@ export default class GameScene extends Phaser.Scene {
     if (audio) audio.playCaught();
 
     this.time.delayedCall(400, () => {
-      this.showOverlay('CAUGHT!', '#ff4444', 'R — Try Again', () => {
+      this.showOverlay('CAUGHT!', '#ff4444', 'Tap / R — Try Again', () => {
         this.scene.stop('UIScene');
         this.scene.restart();
       });
@@ -226,7 +226,7 @@ export default class GameScene extends Phaser.Scene {
     if (audio) audio.playWin();
 
     this.time.delayedCall(500, () => {
-      this.showOverlay(this.cfg.winTitle, '#ffcc00', 'R — Continue', () => {
+      this.showOverlay(this.cfg.winTitle, '#ffcc00', 'Tap / R — Continue', () => {
         this.scene.stop('UIScene');
         this.scene.start(this.cfg.nextScene);
       });
@@ -296,9 +296,11 @@ export default class GameScene extends Phaser.Scene {
     if (this.caught || this.won) return;
     this.handleInput();
     this.manageGuards();
-  
+
     if ((this.player.x < 0 || this.player.x > this.cfg.cameraWidth) || (this.player.y < 0 || this.player.y > this.cfg.cameraHeight)) {
-      this.playerHit(this.player.x);
+      // Fake guard positioned opposite the player so knockback pushes toward center
+      const fakeGuard = { x: this.player.x > this.cfg.cameraWidth / 2 ? 0 : this.cfg.cameraWidth };
+      this.playerHit(fakeGuard);
       if (this.lives > 0) {
         this.player.x = this.cfg.playerStart.x;
         this.player.y = this.cfg.playerStart.y;
