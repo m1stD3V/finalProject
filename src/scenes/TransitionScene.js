@@ -5,9 +5,12 @@ export default class TransitionScene extends Phaser.Scene {
   }
 
   create(data) {
+    const W = this.cameras.main.width;
+    const H = this.cameras.main.height;
+
     const overlay = this.add.graphics();
     overlay.fillStyle(0x000000, 0);
-    overlay.fillRect(0, 0, 800, 448);
+    overlay.fillRect(0, 0, W, H);
 
     this.tweens.addCounter({
       from: 0,
@@ -16,7 +19,7 @@ export default class TransitionScene extends Phaser.Scene {
       onUpdate: (t) => {
         overlay.clear();
         overlay.fillStyle(0x000000, t.getValue());
-        overlay.fillRect(0, 0, 800, 448);
+        overlay.fillRect(0, 0, W, H);
       },
       onComplete: () => {
         if (data.callback) data.callback();
@@ -27,7 +30,7 @@ export default class TransitionScene extends Phaser.Scene {
           onUpdate: (t) => {
             overlay.clear();
             overlay.fillStyle(0x000000, t.getValue());
-            overlay.fillRect(0, 0, 800, 448);
+            overlay.fillRect(0, 0, W, H);
           },
           onComplete: () => this.scene.stop()
         });

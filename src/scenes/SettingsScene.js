@@ -73,7 +73,7 @@ export default class SettingsScene extends Phaser.Scene {
 
     this.createButton(W / 2, py + 322, 'BACK', false, () => this.close());
 
-    this.input.keyboard.once('keydown-ESC', () => this.close());
+    if (this.input.keyboard) this.input.keyboard.once('keydown-ESC', () => this.close());
 
     if (inGame) this.scene.pause(this.callerKey);
   }
@@ -123,10 +123,13 @@ export default class SettingsScene extends Phaser.Scene {
 
     redraw(x0 + initial * trackW);
 
+    // Track which pointer started the drag so a second finger can't hijack the slider
+    let dragPointerId = null;
+
     const zone = this.add.zone(cx, cy, trackW + 20, 32).setInteractive({ useHandCursor: true });
-    zone.on('pointerdown', (ptr) => { dragging = true; redraw(ptr.x); });
-    this.input.on('pointermove', (ptr) => { if (dragging) redraw(ptr.x); });
-    this.input.on('pointerup', () => { dragging = false; });
+    zone.on('pointerdown', (ptr) => { dragging = true; dragPointerId = ptr.id; redraw(ptr.x); });
+    this.input.on('pointermove', (ptr) => { if (dragging && ptr.id === dragPointerId) redraw(ptr.x); });
+    this.input.on('pointerup', (ptr) => { if (ptr.id === dragPointerId) { dragging = false; dragPointerId = null; } });
   }
 
   // danger=true -> red-toned (Reset); otherwise gold-trimmed stone
@@ -154,8 +157,9 @@ export default class SettingsScene extends Phaser.Scene {
 
     const zone = this.add.zone(x, y, bw, bh).setInteractive({ useHandCursor: true });
     zone.on('pointerover', () => { draw(true); text.setColor('#ffffff'); });
-    zone.on('pointerout', () => { draw(false); text.setColor(baseColor); });
-    zone.on('pointerdown', callback);
+    zone.on('pointerout',  () => { draw(false); text.setColor(baseColor); });
+    zone.on('pointerdown', () => { draw(true); text.setColor('#ffffff'); callback(); });
+    zone.on('pointerup',   () => { draw(false); text.setColor(baseColor); });
 
     return text;
   }

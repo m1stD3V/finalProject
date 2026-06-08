@@ -287,12 +287,18 @@ export default class MenuScene extends Phaser.Scene {
     const zone = this.add.zone(x, y, bw, bh).setDepth(14).setInteractive({ useHandCursor: true });
     zone.on('pointerover', () => {
       draw(true); text.setColor('#ffffff');
+      this.tweens.killTweensOf(text);
       this.tweens.add({ targets: text, scale: 1.05, duration: 90 });
     });
     zone.on('pointerout', () => {
       draw(false); text.setColor(primary ? '#ffffff' : '#d7dbe6');
+      this.tweens.killTweensOf(text);
       this.tweens.add({ targets: text, scale: 1, duration: 90 });
     });
-    zone.on('pointerdown', callback);
+    zone.on('pointerdown', () => {
+      draw(true); text.setColor('#ffffff');
+      callback();
+    });
+    zone.on('pointerup', () => draw(false));
   }
 }

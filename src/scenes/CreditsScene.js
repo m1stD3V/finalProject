@@ -174,12 +174,15 @@ export default class CreditsScene extends Phaser.Scene {
     const zone = this.add.zone(x, y, bw, bh).setDepth(14).setInteractive({ useHandCursor: true });
     zone.on('pointerover', () => {
       draw(true);
-      this.tweens.add({ targets: [bg, text], scale: 1.04, duration: 90 });
+      this.tweens.killTweensOf(text);
+      this.tweens.add({ targets: text, scale: 1.04, duration: 90 });
     });
     zone.on('pointerout', () => {
       draw(false);
-      this.tweens.add({ targets: [bg, text], scale: 1, duration: 90 });
+      this.tweens.killTweensOf(text);
+      this.tweens.add({ targets: text, scale: 1, duration: 90 });
     });
-    zone.on('pointerdown', callback);
+    zone.on('pointerdown', () => { draw(true); callback(); });
+    zone.on('pointerup', () => draw(false));
   }
 }

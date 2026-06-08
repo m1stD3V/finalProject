@@ -15,7 +15,7 @@ import TransitionScene from './scenes/TransitionScene.js';
 
 // Simplified PoC configuration
 const config = {
-  type: Phaser.WEBGL,
+  type: Phaser.AUTO,
   width: 800,
   height: 448,
   parent: 'game-container',
@@ -32,7 +32,8 @@ const config = {
     }
   },
   input: {
-    activePointers: 4
+    activePointers: 4,
+    disableContextMenu: true
   },
   pixelArt: true,
   roundPixels: true,

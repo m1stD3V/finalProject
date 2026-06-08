@@ -129,6 +129,11 @@ export default class GameScene extends Phaser.Scene {
   }
 
   setupKeyboardInput() {
+    if (!this.input.keyboard) {
+      this.cursors = { left: { isDown: false }, right: { isDown: false }, up: { isDown: false } };
+      this.tKey = { isDown: false };
+      return;
+    }
     this.cursors = this.input.keyboard.createCursorKeys();
     this.tKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.T);
   }
@@ -234,29 +239,30 @@ export default class GameScene extends Phaser.Scene {
   }
 
   showOverlay(title, titleColor, hint, onAction) {
-    const view = this.cameras.main.worldView;
-    const cx = view.centerX;
-    const cy = view.centerY;
+    const { width: W, height: H } = this.cameras.main;
+    const cx = W / 2;
+    const cy = H / 2;
     const res = this.cameras.main.zoom * (window.devicePixelRatio || 1);
 
-    const bg = this.add.graphics().setDepth(200);
+    // scrollFactor(0) pins these to screen space so camera drift/shake can't misalign them
+    const bg = this.add.graphics().setDepth(200).setScrollFactor(0);
     bg.fillStyle(0x000000, 0.75);
-    bg.fillRect(view.x, view.y, view.width, view.height);
+    bg.fillRect(0, 0, W, H);
 
     this.add.text(cx, cy - 18, title, {
       fontSize: '14px', color: titleColor, fontFamily: 'monospace', fontStyle: 'bold',
-    }).setOrigin(0.5).setDepth(201).setResolution(res);
+    }).setOrigin(0.5).setDepth(201).setScrollFactor(0).setResolution(res);
 
     const hintText = this.add.text(cx, cy + 8, hint, {
       fontSize: '7px', color: '#cccccc', fontFamily: 'monospace',
-    }).setOrigin(0.5).setDepth(201).setResolution(res);
+    }).setOrigin(0.5).setDepth(201).setScrollFactor(0).setResolution(res);
 
     this.tweens.add({ targets: hintText, alpha: 0.2, duration: 600, yoyo: true, repeat: -1 });
 
-    this.add.zone(cx, cy, view.width, view.height)
-      .setDepth(202).setInteractive().once('pointerdown', onAction);
+    this.add.zone(cx, cy, W, H)
+      .setDepth(202).setScrollFactor(0).setInteractive().once('pointerdown', onAction);
 
-    this.input.keyboard.once('keydown-R', onAction);
+    if (this.input.keyboard) this.input.keyboard.once('keydown-R', onAction);
   }
 
   switchTimePeriod() {
@@ -297,9 +303,9 @@ export default class GameScene extends Phaser.Scene {
     this.handleInput();
     this.manageGuards();
 
-    if ((this.player.x < 0 || this.player.x > this.cfg.cameraWidth) || (this.player.y < 0 || this.player.y > this.cfg.cameraHeight)) {
+    if ((this.player.x < 0 || this.player.x > this.cfg.worldWidth) || (this.player.y < 0 || this.player.y > this.cfg.worldHeight)) {
       // Fake guard positioned opposite the player so knockback pushes toward center
-      const fakeGuard = { x: this.player.x > this.cfg.cameraWidth / 2 ? 0 : this.cfg.cameraWidth };
+      const fakeGuard = { x: this.player.x > this.cfg.worldWidth / 2 ? 0 : this.cfg.worldWidth };
       this.playerHit(fakeGuard);
       if (this.lives > 0) {
         this.player.x = this.cfg.playerStart.x;
