@@ -303,9 +303,9 @@ export default class GameScene extends Phaser.Scene {
     this.handleInput();
     this.manageGuards();
 
-    if ((this.player.x < 0 || this.player.x > this.cfg.worldWidth) || (this.player.y < 0 || this.player.y > this.cfg.worldHeight)) {
+    if ((this.player.x < 0 || this.player.x > this.cfg.cameraWidth) || (this.player.y < 0 || this.player.y > this.cfg.cameraHeight)) {
       // Fake guard positioned opposite the player so knockback pushes toward center
-      const fakeGuard = { x: this.player.x > this.cfg.worldWidth / 2 ? 0 : this.cfg.worldWidth };
+      const fakeGuard = { x: this.player.x > this.cfg.cameraWidth / 2 ? 0 : this.cfg.cameraWidth };
       this.playerHit(fakeGuard);
       if (this.lives > 0) {
         this.player.x = this.cfg.playerStart.x;
