@@ -332,13 +332,13 @@
  "nextobjectid":1,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.12.1",
+ "tiledversion":"1.12.2",
  "tileheight":16,
  "tilesets":[
         {
          "columns":12,
          "firstgid":1,
-         "image":"..\/Desktop\/CMPM 120\/finalProject\/assets\/environment\/levelTileset.png",
+         "image":"..\/assets\/environment\/levelTileset.png",
          "imageheight":176,
          "imagewidth":192,
          "margin":0,

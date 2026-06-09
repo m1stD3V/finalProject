@@ -212,19 +212,19 @@
  "nextobjectid":1,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.12.1",
+ "tiledversion":"1.12.2",
  "tileheight":16,
  "tilesets":[
         {
          "columns":12,
          "firstgid":1,
-         "image":"..\/Desktop\/CMPM 120\/finalProject\/assets\/environment\/levelTileset.png",
-         "imageheight":176,
+         "image":"..\/assets\/environment\/levelTileset.png",
+         "imageheight":192,
          "imagewidth":192,
          "margin":0,
          "name":"levelTileset",
          "spacing":0,
-         "tilecount":132,
+         "tilecount":144,
          "tileheight":16,
          "tilewidth":16
         }],
